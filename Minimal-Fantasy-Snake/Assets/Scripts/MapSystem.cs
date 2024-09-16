@@ -4,34 +4,35 @@ using UnityEngine;
 
 public class MapSystem : MonoBehaviour
 {
-    [SerializeField] private int maxGridX = 16;
-    [SerializeField] private int maxGridZ = 16;
+    [SerializeField] private int _maxGridX = 16;
+    [SerializeField] private int _maxGridZ = 16;
 
-    [SerializeField] private int mapGridCount;
+    [SerializeField] private int _mapGridCount;
 
-    [SerializeField] private BlockData playerSpawnPoint;
-    [SerializeField] private List<BlockData> blockDataList = new();
+    [SerializeField] private Vector3 _playerSpawnPoint;
+    [SerializeField] private List<BlockData> _blockDataList = new();
 
     private GameObject blockParent;
     // Start is called before the first frame update
     void Start()
     {
         Init();
+        SpawnPlayer();
     }
 
     void Clear()
     {
-        blockDataList.Clear();
+        _blockDataList.Clear();
     }
 
     void Init()
     {
         Clear();
 
-        if (maxGridX < 16)
-            maxGridX = 16;
-        if (maxGridZ < 16)
-            maxGridZ = 16;
+        if (_maxGridX < 16)
+            _maxGridX = 16;
+        if (_maxGridZ < 16)
+            _maxGridZ = 16;
 
         if (blockParent != null)
             Destroy(blockParent);
@@ -40,8 +41,8 @@ public class MapSystem : MonoBehaviour
         blockParent.name = "blockParent";
         blockParent.transform.SetParent(transform);
 
-        for (int i = 0; i < maxGridX; i++)
-            for (int j = 0; j < maxGridZ; j++)
+        for (int i = 0; i < _maxGridX; i++)
+            for (int j = 0; j < _maxGridZ; j++)
             {
                 GameObject block = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 block.transform.parent = blockParent.transform;
@@ -56,13 +57,21 @@ public class MapSystem : MonoBehaviour
                 blockData.id = block.transform.GetSiblingIndex() + 1;
                 blockData.position = new Vector3(i + 0.5f, -0.5f, j + 0.5f);
 
-                blockDataList.Add(blockData);
+                _blockDataList.Add(blockData);
 
-                if (i == Mathf.RoundToInt(maxGridX / 2) && j == Mathf.RoundToInt(maxGridZ / 2))
-                    playerSpawnPoint = blockData;
+                if (i == Mathf.RoundToInt(_maxGridX / 2) && j == Mathf.RoundToInt(_maxGridZ / 2))
+                    _playerSpawnPoint = new Vector3(blockData.position.x, 0.5f, blockData.position.z);
             }
 
-        mapGridCount = blockDataList.Count;
+        _mapGridCount = _blockDataList.Count;
+    }
+
+    void SpawnPlayer()
+    {
+        GameObject player = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        player.name = "Player";
+        player.transform.position = _playerSpawnPoint;
+        player.AddComponent<PlayerController>();
     }
 
     // Update is called once per frame
