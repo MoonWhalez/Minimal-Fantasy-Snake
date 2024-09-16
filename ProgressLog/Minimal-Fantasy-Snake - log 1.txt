@@ -1,0 +1,65 @@
+Minimal-Fantasy-Snake - log 1
+
+1.The game will be played on a 16x16 grid board.
+- i will plan to adjustable board size
+
+2.At the start of the game, spawn a player-controlled Hero, a number of
+collectable Heroes, and a number of Monsters.
+- clear
+
+3.The player can do the following actions:
+To move
+Press WASD on the keyboard to move in the up, left, right, and
+down directions.
+Pressing the D-Pad on the gamepad
+The player cannot move in the opposite direction. If the player
+character is facing up, they can go left, up, or right, but not down.
+The Hero beside the front character will move to occupy the same
+space as the previous Hero.
+- clear
+
+4.Unlike Snake, there is no fixed interval for movement. This game uses a
+turn-based system, in which a turn is passed only when the player makes a
+move.
+- clear
+
+5.Every character (both Heroes and Monsters) has three stats: Health, Attack,
+Defense.
+There is a UI showing its stats for each character.
+- clear
+
+6.Collision occurs when player character move in a direction that will occupy
+the space of other entity (Heroes line, collectable Hero or Monster)
+6.1 A collision with the Hero line will result in the game being over
+immediately.
+- clear
+
+6.2 Collide with collectable Hero will collect that hero. The collected hero
+will be at the end of the line. The front character will occupy the space
+of that hero. Also, spawn new heroes according to the chance
+configuration.
+- clear
+
+6.3 Collide with the Monster will result in battle.
+When a battle occurs, reduce health both Hero and Monster at the
+same time using this formula: Damage = (Attacker Attack - Defender
+Defense)
+If the Health of the Monster is 0 or lower, remove that enemy from
+the game and spawn new Monsters according to the chance
+configuration.
+If the Health of the Hero is 0 or lower, remove that hero from the
+game and move the rest of the line normally.
+- clear and if monster not dead player decide to escape or keep fighting
+
+7. There is no win condition. The player can play this game endlessly.
+- clear
+
+8. At least these values must be able to be configured.
+8.1 Start number of entity spawn
+8.2 Min and max stats
+8.3 The chance of spawning (how many Heroes or Monsters will be
+spawned when removed)
+- clear
+
+
+

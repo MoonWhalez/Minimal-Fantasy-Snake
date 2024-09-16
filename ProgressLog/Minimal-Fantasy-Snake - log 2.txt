@@ -1,0 +1,42 @@
+Minimal-Fantasy-Snake - log 2
+
+- try to create map with grid system first
+
+- base class Character
+ - min atk
+ - max atk
+ - min def
+ - max def
+ - hp
+
+- warrior : Character, iCharacter
+- rogue : Character, iCharacter
+- wizard : Character, iCharacter
+
+- interface iCharacter
+ - heal()
+ - dmg()
+ - buff()
+ - debuff()
+
+- buff Type
+ -atk
+ -def
+
+game config
+- set spawn chance for each class
+- set hero spawn count 
+- set heroes start count
+
+- set monster spawn count
+- set monsters start count
+
+game system
+- spawn player at center of map
+- move system
+- heroes line
+- after 1st move spawn heroes line and monsters
+- collide system
+ - heroes line
+ - enemy
+ - collectable hero
