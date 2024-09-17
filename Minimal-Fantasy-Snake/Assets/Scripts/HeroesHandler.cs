@@ -28,7 +28,7 @@ public class HeroesHandler : MonoBehaviour
         {
             Vector2Int lastDirection = PlayerController.instance.GetLastDirection();
 
-            Vector3 spawnOffset;
+            Vector3 spawnOffset = Vector3.zero;
             Vector3 spawnPosition;
             Vector2Int spawnDirection = lastDirection;
 
@@ -41,7 +41,6 @@ public class HeroesHandler : MonoBehaviour
             }
             else 
             {
-                spawnOffset = new Vector3(lastDirection.x, 0, lastDirection.y);
                 spawnPosition = PlayerController.instance.transform.position;
             }
 
