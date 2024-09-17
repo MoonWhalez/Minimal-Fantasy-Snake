@@ -1,0 +1,8 @@
+Minimal-Fantasy-Snake - log 3
+
+- create player scripts
+	- character
+	- character classes 
+	- hero
+
+- create line movement

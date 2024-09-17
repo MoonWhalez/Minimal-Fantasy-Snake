@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ public class MapSystem : MonoBehaviour
     [SerializeField] private int _mapGridCount;
 
     [SerializeField] private Vector3 _playerSpawnPoint;
+    [SerializeField] private BlockData _playerSpawnBlock;
     [SerializeField] private List<BlockData> _blockDataList = new();
 
     private GameObject blockParent;
@@ -60,7 +60,10 @@ public class MapSystem : MonoBehaviour
                 _blockDataList.Add(blockData);
 
                 if (i == Mathf.RoundToInt(_maxGridX / 2) && j == Mathf.RoundToInt(_maxGridZ / 2))
+                {
                     _playerSpawnPoint = new Vector3(blockData.position.x, 0.5f, blockData.position.z);
+                    _playerSpawnBlock = blockData;
+                }
             }
 
         _mapGridCount = _blockDataList.Count;
@@ -72,12 +75,52 @@ public class MapSystem : MonoBehaviour
         player.name = "Player";
         player.transform.position = _playerSpawnPoint;
         player.AddComponent<PlayerController>();
+
+        GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        heroObj.transform.position = _playerSpawnPoint;
+        heroObj.transform.SetParent(player.transform);
+
+        Character character = new();
+        int health = 10;
+        int atk = 10;
+        int atkMax = 10;
+        int def = 10;
+        int defMax = 10;
+
+        int randomChance = Random.Range(0, 101);
+        Debug.Log("randomChance " + randomChance);
+
+        if (randomChance >= 75)
+        {
+            character = new Warrior(health * 2, health * 2, atk, atkMax * 2, def * 2, defMax * 3);
+            heroObj.name = "Warrior";
+
+        }
+        else if (randomChance >= 50)
+        {
+            character = new Rouge(health, health, atk * 2, atkMax * 3, def, defMax * 2);
+            heroObj.name = "Rouge";
+        }
+        else if (randomChance <= 25)
+        {
+            character = new Wizard(health, health, atk * 3, atkMax * 4, def, defMax);
+            heroObj.name = "Wizard";
+        }
+
+        Hero hero = heroObj.AddComponent<Hero>();
+        hero.SetCharacter(character);
+        hero.SetPosition(_playerSpawnPoint);
+
+        HeroesHandler.instance.AddCharacter(heroObj);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.M)) 
+        {
             Init();
+            SpawnPlayer();
+        }
     }
 }

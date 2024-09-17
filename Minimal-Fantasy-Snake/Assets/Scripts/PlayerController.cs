@@ -4,10 +4,23 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
+
     private Vector2Int inputDirection;
     private Vector2Int lastDirection;
 
     bool isMove;
+
+    private void Start()
+    {
+        if (instance)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+    }
 
     void Update()
     {
@@ -16,23 +29,25 @@ public class PlayerController : MonoBehaviour
 
     void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)/* Gamepad up */)
+        //TODO : Change Arrow to Gamepad direction
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             inputDirection = Vector2Int.up;
             isMove = true;
         }
 
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow /* Gamepad left */))
+        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             inputDirection = Vector2Int.left;
             isMove = true;
         }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow/* Gamepad right */))
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             inputDirection = Vector2Int.right;
             isMove = true;
         }
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow/* Gamepad down */))
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             inputDirection = Vector2Int.down;
             isMove = true;
@@ -61,7 +76,8 @@ public class PlayerController : MonoBehaviour
 
         Debug.LogError("can not move backward!");
         isMove = false;
-        return false/* Logic to check valid movement */;
+
+        return false;
     }
 
     void Move(Vector2Int direction)

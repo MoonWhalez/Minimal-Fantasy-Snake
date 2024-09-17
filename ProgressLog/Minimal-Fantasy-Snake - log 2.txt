@@ -1,6 +1,8 @@
 Minimal-Fantasy-Snake - log 2
 
-- try to create map with grid system first
+- try to create map with grid system first /done
+- find player spawn point at center of map /done
+- create player scripts
 
 - base class Character
  - min atk
