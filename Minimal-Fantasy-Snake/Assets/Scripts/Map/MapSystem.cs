@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class MapSystem : MonoBehaviour
 {
+    public static MapSystem instance;
+
     [SerializeField] private int _maxGridX = 16;
     [SerializeField] private int _maxGridZ = 16;
 
@@ -13,11 +15,20 @@ public class MapSystem : MonoBehaviour
     [SerializeField] private List<BlockData> _blockDataList = new();
 
     private GameObject blockParent;
+
     // Start is called before the first frame update
     void Start()
     {
+        if (instance)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+
         Init();
-        SpawnPlayer();
+        SpawnPlayerController();
     }
 
     void Clear()
@@ -69,58 +80,32 @@ public class MapSystem : MonoBehaviour
         _mapGridCount = _blockDataList.Count;
     }
 
-    void SpawnPlayer()
+    void SpawnPlayerController()
     {
-        GameObject player = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        player.name = "Player";
-        player.transform.position = _playerSpawnPoint;
-        player.AddComponent<PlayerController>();
-
-        GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        heroObj.transform.position = _playerSpawnPoint;
-        heroObj.transform.SetParent(player.transform);
-
-        Character character = new();
-        int health = 10;
-        int atk = 10;
-        int atkMax = 10;
-        int def = 10;
-        int defMax = 10;
-
-        int randomChance = Random.Range(0, 101);
-        Debug.Log("randomChance " + randomChance);
-
-        if (randomChance >= 75)
+        if (PlayerController.instance == null)
         {
-            character = new Warrior(health * 2, health * 2, atk, atkMax * 2, def * 2, defMax * 3);
-            heroObj.name = "Warrior";
+            GameObject controllerPlayer = new GameObject();
+            controllerPlayer.name = "PlayerController";
+            controllerPlayer.transform.position = _playerSpawnPoint;
+            controllerPlayer.AddComponent<PlayerController>();
 
+            GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            head.transform.SetParent(controllerPlayer.transform);
+            head.transform.localPosition = new Vector3(0, 0.5f, 0);
         }
-        else if (randomChance >= 50)
-        {
-            character = new Rouge(health, health, atk * 2, atkMax * 3, def, defMax * 2);
-            heroObj.name = "Rouge";
-        }
-        else if (randomChance <= 25)
-        {
-            character = new Wizard(health, health, atk * 3, atkMax * 4, def, defMax);
-            heroObj.name = "Wizard";
-        }
-
-        Hero hero = heroObj.AddComponent<Hero>();
-        hero.SetCharacter(character);
-        hero.SetPosition(_playerSpawnPoint);
-
-        HeroesHandler.instance.AddCharacter(heroObj);
+        else
+            PlayerController.instance.transform.position = _playerSpawnPoint;
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M)) 
+        if (Input.GetKeyDown(KeyCode.M))
         {
             Init();
-            SpawnPlayer();
+            SpawnPlayerController();
         }
     }
 }

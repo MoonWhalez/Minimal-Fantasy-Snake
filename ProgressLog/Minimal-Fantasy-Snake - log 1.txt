@@ -1,11 +1,11 @@
 Minimal-Fantasy-Snake - log 1
 
-1.The game will be played on a 16x16 grid board.
-- i will plan to adjustable board size
+1.The game will be played on a 16x16 grid board. 
+- i will plan to adjustable board size /done
 
 2.At the start of the game, spawn a player-controlled Hero, a number of
 collectable Heroes, and a number of Monsters.
-- clear
+- clear /in progress
 
 3.The player can do the following actions:
 To move
@@ -16,17 +16,17 @@ The player cannot move in the opposite direction. If the player
 character is facing up, they can go left, up, or right, but not down.
 The Hero beside the front character will move to occupy the same
 space as the previous Hero.
-- clear
+- clear /in progress
 
 4.Unlike Snake, there is no fixed interval for movement. This game uses a
 turn-based system, in which a turn is passed only when the player makes a
 move.
-- clear
+- clear 
 
 5.Every character (both Heroes and Monsters) has three stats: Health, Attack,
 Defense.
 There is a UI showing its stats for each character.
-- clear
+- clear /in progress
 
 6.Collision occurs when player character move in a direction that will occupy
 the space of other entity (Heroes line, collectable Hero or Monster)
@@ -38,7 +38,7 @@ immediately.
 will be at the end of the line. The front character will occupy the space
 of that hero. Also, spawn new heroes according to the chance
 configuration.
-- clear
+- clear /in progress
 
 6.3 Collide with the Monster will result in battle.
 When a battle occurs, reduce health both Hero and Monster at the

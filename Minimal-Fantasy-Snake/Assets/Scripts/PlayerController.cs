@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,10 +6,12 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
 
-    private Vector2Int inputDirection;
+    private Vector2Int inputDirection = Vector2Int.up;
     private Vector2Int lastDirection;
 
     bool isMove;
+
+    public Action OnMove;
 
     private void Start()
     {
@@ -83,6 +85,33 @@ public class PlayerController : MonoBehaviour
     void Move(Vector2Int direction)
     {
         transform.position += new Vector3(direction.x, 0, direction.y);
+
+        List<Hero> heroes = HeroesHandler.instance.GetHeroesList();
+
+        if (heroes.Count > 0)
+        {
+            for (int i = heroes.Count - 1; i >= 0; i--)
+            {
+                if (i > 0)
+                {
+                    heroes[i].SetPosition(heroes[i - 1].GetPosition());
+                    heroes[i].SetDirection(heroes[i - 1].GetDirection());
+                }
+                else
+                {
+                    heroes[i].SetPosition(transform.position);
+                    heroes[i].SetDirection(direction);
+                }
+            }
+        }
         Debug.Log($"move direction {direction}");
+    }
+
+    public Vector2Int GetLastDirection()
+    {
+        if (lastDirection == Vector2Int.zero)
+            lastDirection = inputDirection;
+
+        return lastDirection;
     }
 }

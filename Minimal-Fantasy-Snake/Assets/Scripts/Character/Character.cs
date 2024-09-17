@@ -1,6 +1,8 @@
 
+using System;
 using UnityEngine;
 
+[Serializable]
 public class Character
 {
     protected int health { get; private set; }
@@ -10,8 +12,10 @@ public class Character
     protected int def { get; private set; }
     protected int defMax { get; private set; }
     protected Vector3 position { get; private set; }
+    protected Vector2Int direction { get; private set; }
 
-    public Character() 
+
+    public Character()
     {
     }
 
@@ -40,9 +44,24 @@ public class Character
         defMax = _max;
     }
 
-    public void SetPosition(Vector3 _position) 
+    public void SetPosition(Vector3 _position)
     {
         position = _position;
+    }
+
+    public void SetDirection(Vector2Int _direction) 
+    {
+        direction = _direction;
+    }
+
+    public Vector3 GetPosition() 
+    {
+        return position;
+    }
+
+    public Vector2Int GetDirection()
+    {
+        return direction;
     }
 }
 

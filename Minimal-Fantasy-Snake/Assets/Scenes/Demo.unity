@@ -437,7 +437,7 @@ GameObject:
   - component: {fileID: 1501101551}
   - component: {fileID: 1501101550}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: HeroesHandler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -465,7 +465,7 @@ Transform:
   m_GameObject: {fileID: 1501101549}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.402263, y: 0.2648759, z: 8.6523905}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

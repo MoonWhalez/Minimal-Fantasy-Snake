@@ -1,8 +1,10 @@
 Minimal-Fantasy-Snake - log 3
 
-- create player scripts
+- create player scripts /in progress
 	- character
 	- character classes 
 	- hero
 
-- create line movement
+- create spawn system /in progress
+
+- create line movement /in progress

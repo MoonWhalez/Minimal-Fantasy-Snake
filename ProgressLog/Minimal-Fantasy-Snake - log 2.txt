@@ -34,10 +34,10 @@ game config
 - set monsters start count
 
 game system
-- spawn player at center of map
-- move system
-- heroes line
-- after 1st move spawn heroes line and monsters
+- spawn player at center of map /done
+- move system /done
+- heroes line /in progress
+- after 1st move spawn heroes and monsters
 - collide system
  - heroes line
  - enemy
