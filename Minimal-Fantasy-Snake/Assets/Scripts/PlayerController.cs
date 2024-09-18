@@ -102,6 +102,8 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+        StatsUIHandler.instance.UpdateUIPosition();
         Debug.Log($"move direction {direction}");
     }
 

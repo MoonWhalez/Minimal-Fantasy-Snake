@@ -22,7 +22,7 @@ public class StatsUIHandler : MonoBehaviour
         instance = this;
     }
     
-    void FixedUpdate()
+    public void UpdateUIPosition()
     {
         foreach (var item in _statsUIList) 
             item.UpdatePosition();
