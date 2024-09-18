@@ -11,8 +11,6 @@ public class PlayerController : MonoBehaviour
 
     bool isMove;
 
-    public Action OnMove;
-
     private void Start()
     {
         if (instance)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class MapSystem : MonoBehaviour
@@ -14,10 +15,10 @@ public class MapSystem : MonoBehaviour
     [SerializeField] private BlockData _playerSpawnBlock;
     [SerializeField] private List<BlockData> _blockDataList = new();
 
-    private GameObject blockParent;
+    private GameObject container;
 
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
         if (instance)
         {
@@ -27,16 +28,24 @@ public class MapSystem : MonoBehaviour
 
         instance = this;
 
-        Init();
-        SpawnPlayerController();
+        await Init();
     }
 
     void Clear()
     {
+        DestroyImmediate(container);
         _blockDataList.Clear();
     }
 
-    void Init()
+    async Task Init()
+    {
+        CreateMap();
+        SpawnPlayerController();
+        await Task.Yield();
+        SetUpCamera();
+    }
+
+    void CreateMap()
     {
         Clear();
 
@@ -45,18 +54,11 @@ public class MapSystem : MonoBehaviour
         if (_maxGridZ < 16)
             _maxGridZ = 16;
 
-        if (blockParent != null)
-            Destroy(blockParent);
-
-        blockParent = new GameObject();
-        blockParent.name = "blockParent";
-        blockParent.transform.SetParent(transform);
-
         for (int i = 0; i < _maxGridX; i++)
             for (int j = 0; j < _maxGridZ; j++)
             {
                 GameObject block = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                block.transform.parent = blockParent.transform;
+                block.transform.parent = Container().transform;
                 block.name = $"block {block.transform.GetSiblingIndex() + 1} {i} {j}";
                 block.transform.position = new Vector3(i + 0.5f, -0.5f, j + 0.5f);
                 block.transform.rotation = Quaternion.identity;
@@ -92,20 +94,39 @@ public class MapSystem : MonoBehaviour
             GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             head.transform.SetParent(controllerPlayer.transform);
             head.transform.localPosition = new Vector3(0, 0.5f, 0);
+            head.transform.localScale = Vector3.one * 0.5f;
+
         }
         else
             PlayerController.instance.transform.position = _playerSpawnPoint;
+
+
+    }
+
+    void SetUpCamera()
+    {
+        Camera.main.transform.position = new Vector3(_playerSpawnPoint.x, 10, _playerSpawnPoint.z - 3);
+        Camera.main.transform.rotation = Quaternion.Euler(75, 0, 0);
+        Camera.main.transform.SetParent(PlayerController.instance.transform);
     }
 
 
-
     // Update is called once per frame
-    void Update()
+    async void Update()
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            Init();
-            SpawnPlayerController();
+            await Init();
+            HeroesHandler.instance.Clear();
+            StatsUIHandler.instance.Clear();
         }
+    }
+
+    public GameObject Container()
+    {
+        if (container == null)
+            container = Helper.instance.Container("BlockContainer", transform);
+
+        return container;
     }
 }

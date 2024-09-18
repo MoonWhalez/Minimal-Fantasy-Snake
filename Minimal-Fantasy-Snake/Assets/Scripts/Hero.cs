@@ -8,6 +8,8 @@ public class Hero : MonoBehaviour
 {
     private Character character;
 
+    [SerializeField] private StatusPopupObject statusPopupObject;
+
     public void SetCharacter(Character _character)
     {
         character = _character;
@@ -32,5 +34,10 @@ public class Hero : MonoBehaviour
     public Vector2Int GetDirection()
     {
         return character.GetDirection();
+    }
+
+    public void SetStatsUI(StatusPopupObject _statusPopupObject)
+    {
+        statusPopupObject = _statusPopupObject;
     }
 }

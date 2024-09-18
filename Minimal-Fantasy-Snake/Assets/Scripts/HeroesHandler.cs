@@ -9,6 +9,7 @@ public class HeroesHandler : MonoBehaviour
 
     [SerializeField] private List<Hero> _heroesList = new();
 
+    private GameObject container;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,27 +33,30 @@ public class HeroesHandler : MonoBehaviour
             Vector3 spawnPosition;
             Vector2Int spawnDirection = lastDirection;
 
-            if (_heroesList.Count > 0) 
+            if (_heroesList.Count > 0)
             {
                 Hero newestHero = _heroesList.Last().GetComponent<Hero>();
                 spawnOffset = new Vector3(newestHero.GetDirection().x, 0, newestHero.GetDirection().y);
                 spawnPosition = newestHero.GetPosition();
                 spawnDirection = newestHero.GetDirection();
             }
-            else 
+            else
             {
                 spawnPosition = PlayerController.instance.transform.position;
             }
 
-            CreateHero(spawnPosition - spawnOffset, spawnDirection);
+            Hero hero = CreateHero(spawnPosition - spawnOffset, spawnDirection);
+
+            StatusPopupObject statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
+            hero.SetStatsUI(statsUI);
         }
     }
 
-    public void CreateHero(Vector3 _position, Vector2Int _direction)
+    public Hero CreateHero(Vector3 _position, Vector2Int _direction)
     {
         GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         heroObj.transform.position = _position;
-        heroObj.transform.SetParent(transform);
+        heroObj.transform.SetParent(Container().transform);
 
         Character character = new();
         int health = 10;
@@ -84,7 +88,9 @@ public class HeroesHandler : MonoBehaviour
         hero.SetCharacter(character);
         hero.SetPosition(_position);
         hero.SetDirection(_direction);
+
         _heroesList.Add(hero);
+        return hero;
     }
 
     public void RemoveCharacter(GameObject _character)
@@ -93,8 +99,22 @@ public class HeroesHandler : MonoBehaviour
         Destroy(_character);
     }
 
-    public List<Hero> GetHeroesList() 
+    public List<Hero> GetHeroesList()
     {
         return _heroesList;
+    }
+
+    public GameObject Container()
+    {
+        if (container == null)
+            container = Helper.instance.Container("HeroesContainer", transform);
+
+        return container;
+    }
+
+    public void Clear()
+    {
+        DestroyImmediate(container);
+        _heroesList.Clear();
     }
 }
