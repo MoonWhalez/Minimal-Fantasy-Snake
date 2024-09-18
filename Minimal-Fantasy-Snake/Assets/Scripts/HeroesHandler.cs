@@ -25,7 +25,7 @@ public class HeroesHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P)) //TODO : copy this when implement collide function
         {
             Vector2Int lastDirection = PlayerController.instance.GetLastDirection();
 
