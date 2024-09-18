@@ -32,4 +32,12 @@ public class Helper : MonoBehaviour
         
         return container;
     }
+
+    public Material SetColor(Color _color) 
+    {
+        Material material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        material.color = _color;
+
+        return material;
+    }
 }

@@ -8,7 +8,7 @@ public class Hero : MonoBehaviour
 {
     private Character character;
 
-    [SerializeField] private StatusPopupObject statusPopupObject;
+    [SerializeField] private StatsUI statusPopupObject;
 
     public void SetCharacter(Character _character)
     {
@@ -36,7 +36,7 @@ public class Hero : MonoBehaviour
         return character.GetDirection();
     }
 
-    public void SetStatsUI(StatusPopupObject _statusPopupObject)
+    public void SetStatsUI(StatsUI _statusPopupObject)
     {
         statusPopupObject = _statusPopupObject;
     }

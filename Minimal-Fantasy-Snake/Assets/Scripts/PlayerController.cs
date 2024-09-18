@@ -104,7 +104,6 @@ public class PlayerController : MonoBehaviour
         }
 
         StatsUIHandler.instance.UpdateUIPosition();
-        Debug.Log($"move direction {direction}");
     }
 
     public Vector2Int GetLastDirection()

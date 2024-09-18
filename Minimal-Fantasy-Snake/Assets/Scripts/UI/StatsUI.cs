@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StatusPopupObject : MonoBehaviour
+public class StatsUI : MonoBehaviour
 {
     private Image image;
     private RectTransform rectTransform; // Cached reference to RectTransform

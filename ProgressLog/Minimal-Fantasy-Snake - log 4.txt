@@ -1,0 +1,11 @@
+Minimal-Fantasy-Snake - log 4
+
+- create stats ui
+	- statsUI Handler
+	- statsUI
+
+- reset game system
+	- clear map /done
+	- clear heroes /done
+	- clear statsUI /done
+	- reset player position /done

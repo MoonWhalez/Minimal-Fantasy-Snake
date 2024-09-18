@@ -21,7 +21,7 @@ space as the previous Hero.
 4.Unlike Snake, there is no fixed interval for movement. This game uses a
 turn-based system, in which a turn is passed only when the player makes a
 move.
-- clear 
+- clear /done
 
 5.Every character (both Heroes and Monsters) has three stats: Health, Attack,
 Defense.

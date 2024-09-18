@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,6 +7,8 @@ public class HeroesHandler : MonoBehaviour
     public static HeroesHandler instance;
 
     [SerializeField] private List<Hero> _heroesList = new();
+    [SerializeField] private List<Vector3> _positions = new();
+    [SerializeField] private List<Vector2Int> _directions = new();
 
     private GameObject container;
     // Start is called before the first frame update
@@ -25,6 +26,11 @@ public class HeroesHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Q)) //TODO : copy this when implement rotate function
+            RotateHeroes(_isRotateTop: true);
+        if (Input.GetKeyDown(KeyCode.E)) //TODO : copy this when implement rotate function
+            RotateHeroes(_isRotateTop: false);
+
         if (Input.GetKeyDown(KeyCode.P)) //TODO : copy this when implement collide function
         {
             Vector2Int lastDirection = PlayerController.instance.GetLastDirection();
@@ -47,7 +53,7 @@ public class HeroesHandler : MonoBehaviour
 
             Hero hero = CreateHero(spawnPosition - spawnOffset, spawnDirection);
 
-            StatusPopupObject statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
+            StatsUI statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
             hero.SetStatsUI(statsUI);
         }
     }
@@ -57,6 +63,8 @@ public class HeroesHandler : MonoBehaviour
         GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         heroObj.transform.position = _position;
         heroObj.transform.SetParent(Container().transform);
+        Renderer renderer = heroObj.GetComponent<Renderer>();
+        renderer.material = Helper.instance.SetColor(Color.white);
 
         Character character = new();
         int health = 10;
@@ -66,7 +74,6 @@ public class HeroesHandler : MonoBehaviour
         int defMax = 10;
 
         int randomChance = Random.Range(0, 101);
-        Debug.Log("randomChance " + randomChance);
 
         if (randomChance >= 75)
         {
@@ -84,6 +91,7 @@ public class HeroesHandler : MonoBehaviour
             heroObj.name = "Wizard";
         }
 
+        heroObj.name += $" {heroObj.transform.GetSiblingIndex()}";
         Hero hero = heroObj.AddComponent<Hero>();
         hero.SetCharacter(character);
         hero.SetPosition(_position);
@@ -116,5 +124,71 @@ public class HeroesHandler : MonoBehaviour
     {
         DestroyImmediate(container);
         _heroesList.Clear();
+    }
+
+    public void RotateHeroes(bool _isRotateTop)
+    {
+        _positions.Clear();
+        _directions.Clear();
+
+        Vector3 position = Vector3.zero;
+        Vector2Int direction = Vector2Int.zero;
+
+        int heroCount = _heroesList.Count;
+
+        if (_isRotateTop)
+        {
+            for (int i = 1; i < heroCount; i++)
+            {
+                position = _heroesList[i].GetPosition();
+                direction = _heroesList[i].GetDirection();
+                _positions.Add(position);
+                _directions.Add(direction);
+            }
+            position = _heroesList[0].GetPosition();
+            direction = _heroesList[0].GetDirection();
+            _positions.Add(position);
+            _directions.Add(direction);
+
+            for (int i = 0; i < _positions.Count; i++)
+                RotateHeroesPostion(i);
+
+            Hero firstHero = _heroesList[0];
+            _heroesList.RemoveAt(0);
+            _heroesList.Add(firstHero);
+        }
+        else
+        {
+            position = _heroesList.Last().GetPosition();
+            direction = _heroesList.Last().GetDirection();
+            _positions.Add(position);
+            _directions.Add(direction);
+
+            for (int i = 0; i < heroCount - 1; i++)
+            {
+                position = _heroesList[i].GetPosition();
+                direction = _heroesList[i].GetDirection();
+                _positions.Add(position);
+                _directions.Add(direction);
+            }
+
+            List<Hero> heroes = new();
+            for (int i = 0; i < _positions.Count; i++)
+            {
+                Hero hero = RotateHeroesPostion(i);
+                heroes.Add(hero);
+            }
+            _heroesList = heroes;
+        }
+    }
+
+    Hero RotateHeroesPostion(int _index) 
+    {
+        Hero hero = _heroesList.FirstOrDefault(x => x.GetPosition() == _positions[_index]);
+        hero.transform.SetSiblingIndex(_index);
+        hero.SetPosition(_positions[_index]);
+        hero.SetDirection(_directions[_index]);
+
+        return hero;
     }
 }

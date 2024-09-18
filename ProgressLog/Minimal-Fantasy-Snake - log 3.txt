@@ -7,4 +7,4 @@ Minimal-Fantasy-Snake - log 3
 
 - create spawn system /in progress
 
-- create line movement /in progress
+- create line movement /done

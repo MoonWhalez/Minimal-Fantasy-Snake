@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class MapSystem : MonoBehaviour
+public class MapSystemHandler : MonoBehaviour
 {
-    public static MapSystem instance;
+    public static MapSystemHandler instance;
 
     [SerializeField] private int _maxGridX = 16;
     [SerializeField] private int _maxGridZ = 16;
@@ -62,6 +62,9 @@ public class MapSystem : MonoBehaviour
                 block.name = $"block {block.transform.GetSiblingIndex() + 1} {i} {j}";
                 block.transform.position = new Vector3(i + 0.5f, -0.5f, j + 0.5f);
                 block.transform.rotation = Quaternion.identity;
+                
+                Renderer renderer = block.GetComponent<Renderer>();
+                renderer.material = Helper.instance.SetColor(Color.black);
 
                 if (block.TryGetComponent(out Collider collider))
                     Destroy(collider);
@@ -96,6 +99,8 @@ public class MapSystem : MonoBehaviour
             head.transform.localPosition = new Vector3(0, 0.5f, 0);
             head.transform.localScale = Vector3.one * 0.5f;
 
+            Renderer renderer = head.GetComponent<Renderer>();
+            renderer.material = Helper.instance.SetColor(Color.green);
         }
         else
             PlayerController.instance.transform.position = _playerSpawnPoint;

@@ -6,7 +6,7 @@ public class StatsUIHandler : MonoBehaviour
 {
     public static StatsUIHandler instance;
 
-    [SerializeField] private List<StatusPopupObject> _statsUIList = new();
+    [SerializeField] private List<StatsUI> _statsUIList = new();
 
     private GameObject container;
 
@@ -28,13 +28,13 @@ public class StatsUIHandler : MonoBehaviour
             item.UpdatePosition();
     }
 
-    public StatusPopupObject CreateStatsUI(Transform _transform) 
+    public StatsUI CreateStatsUI(Transform _transform) 
     {
         GameObject popupObj = new GameObject(); //TODO change to prefab to handle more ui
 
         popupObj.transform.SetParent(Container().transform);
 
-        StatusPopupObject _statusPopupObject = popupObj.AddComponent<StatusPopupObject>();
+        StatsUI _statusPopupObject = popupObj.AddComponent<StatsUI>();
         _statusPopupObject.Show(true);
         _statusPopupObject.SetTartget(_transform);
         _statusPopupObject.SetSize(100f);

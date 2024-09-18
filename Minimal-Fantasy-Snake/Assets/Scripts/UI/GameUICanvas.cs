@@ -39,7 +39,7 @@ public class GameUICanvas : MonoBehaviour
     {
         isActiveDebugUI = true;
 
-        if (!_fpsDebugerText.TryGetComponent(out FPSDebuger fPSDebuger))
+        if (!_fpsDebugerText.GetComponent<FPSDebuger>())
             _fpsDebugerText.AddComponent<FPSDebuger>();
 
         ShowFPS(isActiveDebugUI);
