@@ -124,6 +124,8 @@ public class HeroesHandler : MonoBehaviour
     {
         DestroyImmediate(container);
         _heroesList.Clear();
+        _positions.Clear();
+        _directions.Clear();
     }
 
     public void RotateHeroes(bool _isRotateTop)
@@ -131,64 +133,44 @@ public class HeroesHandler : MonoBehaviour
         _positions.Clear();
         _directions.Clear();
 
-        Vector3 position = Vector3.zero;
-        Vector2Int direction = Vector2Int.zero;
-
         int heroCount = _heroesList.Count;
+
+        for (int i = 0; i < heroCount; i++)
+        {
+            _positions.Add(_heroesList[i].GetPosition());
+            _directions.Add(_heroesList[i].GetDirection());
+        }
 
         if (_isRotateTop)
         {
-            for (int i = 1; i < heroCount; i++)
-            {
-                position = _heroesList[i].GetPosition();
-                direction = _heroesList[i].GetDirection();
-                _positions.Add(position);
-                _directions.Add(direction);
-            }
-            position = _heroesList[0].GetPosition();
-            direction = _heroesList[0].GetDirection();
-            _positions.Add(position);
-            _directions.Add(direction);
-
-            for (int i = 0; i < _positions.Count; i++)
-                RotateHeroesPostion(i);
-
             Hero firstHero = _heroesList[0];
             _heroesList.RemoveAt(0);
             _heroesList.Add(firstHero);
+
+            for (int i = 0; i < _positions.Count; i++)
+                RotateHeroesPostion(i);
         }
         else
         {
-            position = _heroesList.Last().GetPosition();
-            direction = _heroesList.Last().GetDirection();
-            _positions.Add(position);
-            _directions.Add(direction);
-
-            for (int i = 0; i < heroCount - 1; i++)
-            {
-                position = _heroesList[i].GetPosition();
-                direction = _heroesList[i].GetDirection();
-                _positions.Add(position);
-                _directions.Add(direction);
-            }
-
             List<Hero> heroes = new();
-            for (int i = 0; i < _positions.Count; i++)
-            {
-                Hero hero = RotateHeroesPostion(i);
-                heroes.Add(hero);
-            }
+            Hero lastHero = _heroesList.Last();
+            heroes.Add(lastHero);
+            for (int i = 0; i < _heroesList.Count - 1; i++)
+                heroes.Add(_heroesList[i]);
+
             _heroesList = heroes;
+
+            for (int i = 0; i < _positions.Count; i++)
+                RotateHeroesPostion(i);
         }
     }
 
-    Hero RotateHeroesPostion(int _index) 
+    Hero RotateHeroesPostion(int _index)
     {
-        Hero hero = _heroesList.FirstOrDefault(x => x.GetPosition() == _positions[_index]);
-        hero.transform.SetSiblingIndex(_index);
-        hero.SetPosition(_positions[_index]);
-        hero.SetDirection(_directions[_index]);
+        _heroesList[_index].SetPosition(_positions[_index]);
+        _heroesList[_index].SetDirection(_directions[_index]);
+        _heroesList[_index].transform.SetSiblingIndex(_index);
 
-        return hero;
+        return _heroesList[_index];
     }
 }
