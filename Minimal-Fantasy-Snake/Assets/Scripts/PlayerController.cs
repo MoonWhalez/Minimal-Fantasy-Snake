@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -10,7 +11,6 @@ public class PlayerController : MonoBehaviour
     private Vector2Int lastDirection;
 
     bool isMove;
-
     private void Start()
     {
         if (instance)
@@ -82,7 +82,15 @@ public class PlayerController : MonoBehaviour
 
     void Move(Vector2Int direction)
     {
-        transform.position += new Vector3(direction.x, 0, direction.y);
+        Vector3 movePosition = transform.position + new Vector3(direction.x, 0, direction.y);
+        //if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.position.x == movePosition.x && x.position.z == movePosition.z) == null)
+        //{
+        //    Debug.LogError("Map is end!");
+        //    lastDirection = Vector2Int.zero;
+        //    return;
+        //}
+
+        transform.position = movePosition;
 
         List<Hero> heroes = HeroesHandler.instance.GetHeroesList();
 

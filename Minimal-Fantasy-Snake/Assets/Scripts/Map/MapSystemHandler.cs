@@ -134,4 +134,9 @@ public class MapSystemHandler : MonoBehaviour
 
         return container;
     }
+
+    public List<BlockData> GetBlockDataList() 
+    {
+        return _blockDataList;
+    }
 }
