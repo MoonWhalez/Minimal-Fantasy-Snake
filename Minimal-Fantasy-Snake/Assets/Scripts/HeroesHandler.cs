@@ -146,9 +146,6 @@ public class HeroesHandler : MonoBehaviour
             Hero firstHero = _heroesList[0];
             _heroesList.RemoveAt(0);
             _heroesList.Add(firstHero);
-
-            for (int i = 0; i < _positions.Count; i++)
-                RotateHeroesPostion(i);
         }
         else
         {
@@ -159,10 +156,10 @@ public class HeroesHandler : MonoBehaviour
                 heroes.Add(_heroesList[i]);
 
             _heroesList = heroes;
-
-            for (int i = 0; i < _positions.Count; i++)
-                RotateHeroesPostion(i);
         }
+
+        for (int i = 0; i < _positions.Count; i++)
+            RotateHeroesPostion(i);
     }
 
     Hero RotateHeroesPostion(int _index)
