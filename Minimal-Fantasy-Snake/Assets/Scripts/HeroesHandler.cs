@@ -32,37 +32,42 @@ public class HeroesHandler : MonoBehaviour
             RotateHeroes(_isRotateTop: false);
 
         if (Input.GetKeyDown(KeyCode.P)) //TODO : copy this when implement collide function
+            CreateHero();
+    }
+
+    public void CreateHero() 
+    {
+        Vector2Int lastDirection = Vector2Int.up;
+        Vector3 spawnPosition = MapSystemHandler.instance.GetPlayerSpawnPoint();
+
+        if (PlayerController.instance != null) 
         {
-            Vector2Int lastDirection = PlayerController.instance.GetLastDirection();
-
-            Vector3 spawnOffset = Vector3.zero;
-            Vector3 spawnPosition;
-            Vector2Int spawnDirection = lastDirection;
-
-            if (_heroesList.Count > 0)
-            {
-                Hero newestHero = _heroesList.Last().GetComponent<Hero>();
-                spawnOffset = new Vector3(newestHero.GetDirection().x, 0, newestHero.GetDirection().y);
-                spawnPosition = newestHero.GetPosition();
-                spawnDirection = newestHero.GetDirection();
-            }
-            else
-            {
-                spawnPosition = PlayerController.instance.transform.position;
-            }
-
-            Hero hero = CreateHero(spawnPosition - spawnOffset, spawnDirection);
-
-            StatsUI statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
-            hero.SetStatsUI(statsUI);
+            lastDirection = PlayerController.instance.GetLastDirection();
+            spawnPosition = PlayerController.instance.transform.position;
         }
+
+        Vector3 spawnOffset = Vector3.zero;
+        Vector2Int spawnDirection = lastDirection;
+
+        if (_heroesList.Count > 0)
+        {
+            Hero newestHero = _heroesList.Last().GetComponent<Hero>();
+            spawnOffset = new Vector3(newestHero.GetDirection().x, 0, newestHero.GetDirection().y);
+            spawnPosition = newestHero.GetPosition();
+            spawnDirection = newestHero.GetDirection();
+        }
+
+        Hero hero = CreateHero(spawnPosition - spawnOffset, spawnDirection);
+
+        StatsUI statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
+        hero.SetStatsUI(statsUI);
     }
 
     public Hero CreateHero(Vector3 _position, Vector2Int _direction)
     {
         GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         heroObj.transform.position = _position;
-        heroObj.transform.SetParent(Container().transform);
+        heroObj.transform.SetParent(GetContainer().transform);
         Renderer renderer = heroObj.GetComponent<Renderer>();
         renderer.material = Helper.instance.SetColor(Color.white);
 
@@ -98,6 +103,8 @@ public class HeroesHandler : MonoBehaviour
         hero.SetDirection(_direction);
 
         _heroesList.Add(hero);
+
+        MapSystemHandler.instance.UpdateBlockDataCharacter();
         return hero;
     }
 
@@ -112,7 +119,7 @@ public class HeroesHandler : MonoBehaviour
         return _heroesList;
     }
 
-    public GameObject Container()
+    public GameObject GetContainer()
     {
         if (container == null)
             container = Helper.instance.Container("HeroesContainer", transform);

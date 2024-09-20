@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 movePosition = transform.position + new Vector3(direction.x, 0, direction.y);
 
-        if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.position.x == movePosition.x && x.position.z == movePosition.z) == null)
+        if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.GetPosition().x == movePosition.x && x.GetPosition().z == movePosition.z) == null)
         {
             Debug.LogError("watchout! it's a cliff, your leader flying to nowhere.. . .");
 
@@ -125,6 +125,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        MapSystemHandler.instance.UpdateBlockDataCharacter();
         StatsUIHandler.instance.UpdateUIPosition();
     }
 

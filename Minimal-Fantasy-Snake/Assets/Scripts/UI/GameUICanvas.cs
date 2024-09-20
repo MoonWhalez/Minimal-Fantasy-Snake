@@ -65,7 +65,7 @@ public class GameUICanvas : MonoBehaviour
         _loadingImage.gameObject.SetActive(_isActive);
     }
 
-    public GameObject Container()
+    public GameObject GetContainer()
     {
         if (container == null)
             container = Helper.instance.Container("UIStatsContainer", transform);

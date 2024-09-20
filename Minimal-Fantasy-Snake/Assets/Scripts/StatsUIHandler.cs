@@ -32,7 +32,7 @@ public class StatsUIHandler : MonoBehaviour
     {
         GameObject obj = new GameObject(); //TODO change to prefab to handle more ui
         obj.name = $"StatsUI {_transform.name}";
-        obj.transform.SetParent(Container().transform);
+        obj.transform.SetParent(GetContainer().transform);
 
         StatsUI _statsUI = obj.AddComponent<StatsUI>();
         _statsUI.Show(true);
@@ -44,9 +44,9 @@ public class StatsUIHandler : MonoBehaviour
         return _statsUI;
     }
 
-    public GameObject Container()
+    public GameObject GetContainer()
     {
-        if (container == null)
+        if (container == null) 
             container = Helper.instance.Container("StatsUIContainer", transform);
 
         return container;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -62,7 +63,7 @@ public class MapSystemHandler : MonoBehaviour
                 block.name = $"block {block.transform.GetSiblingIndex() + 1} {i} {j}";
                 block.transform.position = new Vector3(i + 0.5f, -0.5f, j + 0.5f);
                 block.transform.rotation = Quaternion.identity;
-                
+
                 Renderer renderer = block.GetComponent<Renderer>();
                 renderer.material = Helper.instance.SetColor(Color.black);
 
@@ -70,14 +71,14 @@ public class MapSystemHandler : MonoBehaviour
                     Destroy(collider);
 
                 BlockData blockData = block.AddComponent<BlockData>();
-                blockData.id = block.transform.GetSiblingIndex() + 1;
-                blockData.position = new Vector3(i + 0.5f, -0.5f, j + 0.5f);
+                blockData.SetID(block.transform.GetSiblingIndex() + 1);
+                blockData.SetPosition(new Vector3(i + 0.5f, -0.5f, j + 0.5f));
 
                 _blockDataList.Add(blockData);
 
                 if (i == Mathf.RoundToInt(_maxGridX / 2) && j == Mathf.RoundToInt(_maxGridZ / 2))
                 {
-                    _playerSpawnPoint = new Vector3(blockData.position.x, 0.5f, blockData.position.z);
+                    _playerSpawnPoint = new Vector3(blockData.GetPosition().x, 0.5f, blockData.GetPosition().z);
                     _playerSpawnBlock = blockData;
                 }
             }
@@ -105,7 +106,7 @@ public class MapSystemHandler : MonoBehaviour
         else
             PlayerController.instance.transform.position = _playerSpawnPoint;
 
-
+        HeroesHandler.instance.CreateHero();
     }
 
     void SetUpCamera()
@@ -135,8 +136,29 @@ public class MapSystemHandler : MonoBehaviour
         return container;
     }
 
-    public List<BlockData> GetBlockDataList() 
+    public List<BlockData> GetBlockDataList()
     {
         return _blockDataList;
+    }
+
+    public void UpdateBlockDataCharacter()
+    {
+        foreach (BlockData item in _blockDataList)
+            item.SetCharacter(null);
+
+        List<Hero> heroList = HeroesHandler.instance.GetHeroesList();
+        foreach (Hero hero in heroList)
+        {
+            BlockData block = _blockDataList.FirstOrDefault(x => x.GetPosition().x == hero.GetPosition().x &&
+            x.GetPosition().z == hero.GetPosition().z);
+
+            if (block != null)
+                block.SetCharacter(hero.GetCharacter());
+        }
+    }
+
+    public Vector3 GetPlayerSpawnPoint()
+    {
+        return _playerSpawnPoint;
     }
 }

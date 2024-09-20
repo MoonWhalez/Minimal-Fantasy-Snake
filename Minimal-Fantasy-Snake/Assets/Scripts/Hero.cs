@@ -1,21 +1,23 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Hero : MonoBehaviour
 {
     private Character character;
 
-    [SerializeField] private StatsUI statusPopupObject;
+    [SerializeField] private StatsUI statsUI;
 
     public void SetCharacter(Character _character)
     {
         character = _character;
     }
 
-    public void SetPosition(Vector3 _position) 
+    public Character GetCharacter()
+    {
+        return character;
+    }
+
+    public void SetPosition(Vector3 _position)
     {
         character.SetPosition(_position);
         transform.position = _position;
@@ -26,7 +28,7 @@ public class Hero : MonoBehaviour
         character.SetDirection(_direction);
     }
 
-    public Vector3 GetPosition() 
+    public Vector3 GetPosition()
     {
         return character.GetPosition();
     }
@@ -36,8 +38,16 @@ public class Hero : MonoBehaviour
         return character.GetDirection();
     }
 
-    public void SetStatsUI(StatsUI _statusPopupObject)
+    public async void SetStatsUI(StatsUI _statsUI)
     {
-        statusPopupObject = _statusPopupObject;
+        statsUI = _statsUI;
+        await Task.Delay(1);
+        statsUI.UpdatePosition();
+    }
+
+    private void OnDestroy()
+    {
+        if (statsUI != null)
+            Destroy(statsUI.gameObject);
     }
 }
