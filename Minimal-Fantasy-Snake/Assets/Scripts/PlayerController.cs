@@ -86,10 +86,14 @@ public class PlayerController : MonoBehaviour
 
         if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.position.x == movePosition.x && x.position.z == movePosition.z) == null)
         {
-            Debug.LogError("Map is end!");
+            Debug.LogError("watchout! it's a cliff, your leader flying to nowhere.. . .");
 
-            if (HeroesHandler.instance.GetHeroesList().Count > 0)
+            if (HeroesHandler.instance.GetHeroesList().Count > 0) 
+            {
                 HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0].gameObject);
+                direction = Vector2Int.zero;
+                lastDirection = direction;
+            }
 
             if (HeroesHandler.instance.GetHeroesList().Count > 1) 
             {
