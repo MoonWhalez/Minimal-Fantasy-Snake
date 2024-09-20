@@ -83,14 +83,24 @@ public class PlayerController : MonoBehaviour
     void Move(Vector2Int direction)
     {
         Vector3 movePosition = transform.position + new Vector3(direction.x, 0, direction.y);
-        //if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.position.x == movePosition.x && x.position.z == movePosition.z) == null)
-        //{
-        //    Debug.LogError("Map is end!");
-        //    lastDirection = Vector2Int.zero;
-        //    return;
-        //}
 
-        transform.position = movePosition;
+        if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.position.x == movePosition.x && x.position.z == movePosition.z) == null)
+        {
+            Debug.LogError("Map is end!");
+
+            if (HeroesHandler.instance.GetHeroesList().Count > 0)
+                HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0].gameObject);
+
+            if (HeroesHandler.instance.GetHeroesList().Count > 1) 
+            {
+                direction = -HeroesHandler.instance.GetHeroesList()[1].GetDirection();
+                lastDirection = direction;
+            }
+        }
+        else
+        {
+            transform.position = movePosition;
+        }
 
         List<Hero> heroes = HeroesHandler.instance.GetHeroesList();
 
