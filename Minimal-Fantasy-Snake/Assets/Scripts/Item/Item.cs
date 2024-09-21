@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Item
+public class Item : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    protected Vector3 position { get; private set; }
+
+    public void SetPosition(Vector3 _position)
     {
-        
+        position = _position;
+        transform.position = _position;
     }
 
-    // Update is called once per frame
-    void Update()
+    public Vector3 GetPosition()
     {
-        
+        return position;
     }
 }

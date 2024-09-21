@@ -36,12 +36,12 @@ public class StatsUI : MonoBehaviour
     {
         rectTransform.sizeDelta = new Vector2(_size, _size / 2);
     }
-    public void SetOffset(float _offset) 
+    public void SetOffset(float _offset)
     {
         offset = _offset;
     }
 
-    public void SetStatsText(Character character) 
+    public void SetStatsText(Character character)
     {
         _HpText.text = $"{character.GetHealth()}/{character.GetHealthMax()}";
         _AtkText.text = $"{character.GetAtk()}/{character.GetAtkMax()}";
@@ -59,6 +59,8 @@ public class StatsUI : MonoBehaviour
             return;
 
         Vector3 screenPosition = mainCamera.WorldToScreenPoint(targetTransform.position + new Vector3(0, offset, 0));
-        rectTransform.position = screenPosition;
+
+        if (rectTransform != null)
+            rectTransform.position = screenPosition;
     }
 }

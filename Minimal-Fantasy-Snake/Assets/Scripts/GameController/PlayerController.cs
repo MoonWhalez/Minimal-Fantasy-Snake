@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector2Int inputDirection;
     private Vector2Int lastDirection;
-
+    private Vector3 movePosition;
     bool isMove;
     private void Awake()
     {
@@ -81,7 +81,8 @@ public class PlayerController : MonoBehaviour
 
     void Move(Vector2Int direction)
     {
-        Vector3 movePosition = transform.position + new Vector3(direction.x, 0, direction.y);
+        bool isPartyMove = false;
+        movePosition = transform.position + new Vector3(direction.x, 0, direction.y);
 
         if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.GetPosition().x == movePosition.x && x.GetPosition().z == movePosition.z) == null)
         {
@@ -89,7 +90,7 @@ public class PlayerController : MonoBehaviour
 
             if (HeroesHandler.instance.GetHeroesList().Count > 0)
             {
-                HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0].gameObject);
+                HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0]);
                 direction = Vector2Int.zero;
                 lastDirection = direction;
             }
@@ -106,57 +107,108 @@ public class PlayerController : MonoBehaviour
 
             if (blockData.GetCharacter() != null)
             {
-                if (blockData.GetCharacter() is Monster)
+                if (blockData.GetCharacter())
                 {
-                    Fight(blockData.GetCharacter());
+                    bool canMove = Fight(blockData.GetCharacter());
+                    isPartyMove = canMove;
                 }
-                else
+                else if (blockData.GetItem())
                 {
                     PickItem();
                 }
             }
-            else
-                transform.position = movePosition;
-        }
-
-        List<Hero> heroes = HeroesHandler.instance.GetHeroesList();
-
-        if (heroes.Count > 0)
-        {
-            for (int i = heroes.Count - 1; i >= 0; i--)
+            else 
             {
-                if (i > 0)
-                {
-                    heroes[i].SetPosition(heroes[i - 1].GetPosition());
-                    heroes[i].SetDirection(heroes[i - 1].GetDirection());
-                }
-                else
-                {
-                    heroes[i].SetPosition(transform.position);
-                    heroes[i].SetDirection(direction);
-                }
+                transform.position = movePosition;
+                isPartyMove = true;
             }
         }
 
-        MapSystemHandler.instance.UpdateBlockDataCharacter();
-        StatsUIHandler.instance.UpdateUIPosition();
+        if (isPartyMove)
+        {
+            List<Character> heroes = HeroesHandler.instance.GetHeroesList();
+
+            if (heroes.Count > 0)
+            {
+                for (int i = heroes.Count - 1; i >= 0; i--)
+                {
+                    if (i > 0)
+                    {
+                        heroes[i].SetPosition(heroes[i - 1].GetPosition());
+                        heroes[i].SetDirection(heroes[i - 1].GetDirection());
+                    }
+                    else
+                    {
+                        heroes[i].SetPosition(transform.position);
+                        heroes[i].SetDirection(direction);
+                    }
+                }
+            }
+
+            MapSystemHandler.instance.UpdateBlockDataCharacter();
+            StatsUIHandler.instance.UpdateUIPosition();
+        }
     }
 
-    void Fight(Character _target)
+    bool Fight(Character _target)
     {
-        Hero hero = HeroesHandler.instance.GetHeroesList().First();
+        Character hero = HeroesHandler.instance.GetHeroesList().First();
 
         //calculate monster dmg
         int atk = Random.Range(_target.GetAtk(), _target.GetAtkMax());
-        int def = Random.Range(hero.GetCharacter().GetAtk(), hero.GetCharacter().GetAtkMax());
+        if (_target is CharacterWarrior && hero is CharacterRouge ||
+            _target is CharacterRouge && hero is CharacterWizard ||
+            _target is CharacterWizard && hero is CharacterWarrior)
+            atk *= 2;
+
+        int def = Random.Range(hero.GetDef(), hero.GetDefMax());
         int dmg = atk - def;
-        //hero.takeDmg();
+
+        hero.TakeDamage(dmg);
 
         //calculate hero dmg
-        atk = Random.Range(hero.GetCharacter().GetAtk(), hero.GetCharacter().GetAtkMax());
-        def = Random.Range(_target.GetAtk(), _target.GetAtkMax());
+        atk = Random.Range(hero.GetAtk(), hero.GetAtkMax());
+        if (hero is CharacterWarrior && _target is CharacterRouge ||
+           hero is CharacterRouge && _target is CharacterWizard ||
+           hero is CharacterWizard && _target is CharacterWarrior)
+            atk *= 2;
+
+        def = Random.Range(_target.GetDef(), _target.GetDefMax());
         dmg = atk - def;
-        //monster.takeDmg();
+
+        _target.TakeDamage(dmg);
+
+        Debug.Log($"hero health {hero.GetHealth()}");
+        Debug.Log($"_target health {hero.GetHealth()}");
+
+        if (hero.GetHealth() <= 0 && _target.GetHealth() <= 0)
+        {
+            Debug.Log("hero and monster dead");
+            HeroesHandler.instance.RemoveCharacter(hero);
+            MonstersHandler.instance.RemoveCharacter(_target);
+            return true; //hero and monster dead
+        }
+        if (hero.GetHealth() <= 0 && _target.GetHealth() > 0)
+        {
+            Debug.Log("hero dead but monster alive");
+            HeroesHandler.instance.RemoveCharacter(hero);
+            return true; //hero dead but monster alive
+        }
+        if (hero.GetHealth() > 0 && _target.GetHealth() <= 0)
+        {
+            Debug.Log("hero alive but monster dead");
+            MonstersHandler.instance.RemoveCharacter(_target);
+            transform.position = movePosition;
+            return true; //hero alive but monster dead
+        }
+
+        if (hero.GetHealth() > 0 && _target.GetHealth() > 0) 
+        {
+            Debug.Log("no one dead");
+            return false; //no one dead
+        }
+
+        return false;
     }
 
     void PickItem()

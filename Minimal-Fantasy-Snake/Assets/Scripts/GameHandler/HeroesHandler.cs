@@ -6,7 +6,7 @@ public class HeroesHandler : MonoBehaviour
 {
     public static HeroesHandler instance;
 
-    [SerializeField] private List<Hero> _heroesList = new();
+    [SerializeField] private List<Character> _heroesList = new();
     [SerializeField] private List<Vector3> _positions = new();
     [SerializeField] private List<Vector2Int> _directions = new();
 
@@ -45,19 +45,19 @@ public class HeroesHandler : MonoBehaviour
 
         if (_heroesList.Count > 0)
         {
-            Hero latestHero = _heroesList.Last().GetComponent<Hero>();
+            Character latestHero = _heroesList.Last().GetComponent<Character>();
             spawnOffset = new Vector3(latestHero.GetDirection().x, 0, latestHero.GetDirection().y);
             spawnPosition = latestHero.GetPosition();
             spawnDirection = latestHero.GetDirection();
         }
 
-        Hero hero = NewHero(spawnPosition - spawnOffset, spawnDirection);
+        Character hero = NewHero(spawnPosition - spawnOffset, spawnDirection);
 
         StatsUI statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
         hero.SetStatsUI(statsUI);
     }
 
-    public Hero NewHero(Vector3 _position, Vector2Int _direction)
+    public Character NewHero(Vector3 _position, Vector2Int _direction)
     {
         GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         heroObj.transform.position = _position;
@@ -65,29 +65,28 @@ public class HeroesHandler : MonoBehaviour
         Renderer renderer = heroObj.GetComponent<Renderer>();
         renderer.material = Helper.instance.SetColor(Color.white);
 
-        Character character = new();
+        Character character = null;
         
         int randomChance = Random.Range(0, 101);
 
         if (randomChance >= 75)
         {
-            character = new CharacterWarrior();
+            character = heroObj.AddComponent<CharacterWarrior>();
             heroObj.name = typeof(CharacterWarrior).Name;
         }
         else if (randomChance >= 50)
         {
-            character = new CharacterRouge();
+            character = heroObj.AddComponent<CharacterRouge>();
             heroObj.name = typeof(CharacterRouge).Name;
         }
         else if (randomChance < 50)
         {
-            character = new CharacterWizard();
+            character = heroObj.AddComponent<CharacterWizard>();
             heroObj.name = typeof(CharacterWizard).Name;
         }
 
         heroObj.name += $" {heroObj.transform.GetSiblingIndex()}";
-        Hero hero = heroObj.AddComponent<Hero>();
-        hero.SetCharacter(character);
+        Character hero = character;
         hero.SetPosition(_position);
         hero.SetDirection(_direction);
 
@@ -97,13 +96,13 @@ public class HeroesHandler : MonoBehaviour
         return hero;
     }
 
-    public void RemoveCharacter(GameObject _character)
+    public void RemoveCharacter(Character _character)
     {
-        _heroesList.Remove(_character.GetComponent<Hero>());
-        Destroy(_character);
+        _heroesList.Remove(_character);
+        Destroy(_character.gameObject);
     }
 
-    public List<Hero> GetHeroesList()
+    public List<Character> GetHeroesList()
     {
         return _heroesList;
     }
@@ -139,14 +138,14 @@ public class HeroesHandler : MonoBehaviour
 
         if (_isRotateTop)
         {
-            Hero firstHero = _heroesList[0];
+            Character firstHero = _heroesList[0];
             _heroesList.RemoveAt(0);
             _heroesList.Add(firstHero);
         }
         else
         {
-            List<Hero> heroes = new();
-            Hero lastHero = _heroesList.Last();
+            List<Character> heroes = new();
+            Character lastHero = _heroesList.Last();
             heroes.Add(lastHero);
             for (int i = 0; i < _heroesList.Count - 1; i++)
                 heroes.Add(_heroesList[i]);
@@ -158,7 +157,7 @@ public class HeroesHandler : MonoBehaviour
             RotateHeroesPostion(i);
     }
 
-    Hero RotateHeroesPostion(int _index)
+    Character RotateHeroesPostion(int _index)
     {
         _heroesList[_index].SetPosition(_positions[_index]);
         _heroesList[_index].SetDirection(_directions[_index]);

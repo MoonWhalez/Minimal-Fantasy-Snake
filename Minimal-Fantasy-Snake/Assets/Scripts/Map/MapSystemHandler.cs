@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class MapSystemHandler : MonoBehaviour
 {
@@ -118,19 +119,17 @@ public class MapSystemHandler : MonoBehaviour
             _avilableBlockDataList.Add(block);
         }
 
-        List<Hero> heroList = HeroesHandler.instance.GetHeroesList();
-        List<Monster> monsterList = MonstersHandler.instance.GetMonstersList();
-        List<Monster> itemList = ItemHandler.instance.GetItemsList();
+        List<Character> heroList = HeroesHandler.instance.GetHeroesList();
+        List<Character> monsterList = MonstersHandler.instance.GetMonstersList();
+        List<Item> itemList = ItemHandler.instance.GetItemsList();
 
         List<Character> characters = new();
 
-        foreach (Hero hero in heroList)
-            characters.Add(hero.GetCharacter());
-        foreach (Monster monster in monsterList)
-            characters.Add(monster.GetCharacter());
-        foreach (Monster item in itemList)
-            characters.Add(item.GetCharacter());
-
+        foreach (Character hero in heroList)
+            characters.Add(hero);
+        foreach (Character monster in monsterList)
+            characters.Add(monster);
+        
         foreach (Character character in characters)
         {
             BlockData block = _blockDataList.FirstOrDefault(x => x.GetPosition().x == character.GetPosition().x &&
@@ -139,6 +138,18 @@ public class MapSystemHandler : MonoBehaviour
             if (block != null)
             {
                 block.SetCharacter(character);
+                _avilableBlockDataList.Remove(block);
+            }
+        }
+
+        foreach (Item item in itemList)
+        {
+            BlockData block = _blockDataList.FirstOrDefault(x => x.GetPosition().x == item.GetPosition().x &&
+            x.GetPosition().z == item.GetPosition().z);
+
+            if (block != null)
+            {
+                block.SetItem(item);
                 _avilableBlockDataList.Remove(block);
             }
         }
