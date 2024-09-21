@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private Vector2Int lastDirection;
 
     bool isMove;
-    private void Start()
+    private void Awake()
     {
         if (instance)
         {

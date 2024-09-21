@@ -29,20 +29,20 @@ public class GameUICanvas : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F9))
-        {
-            isActiveDebugUI = !isActiveDebugUI;
-            ShowFPS(isActiveDebugUI);
-        }
+        
     }
+
     public void Init()
     {
         isActiveDebugUI = true;
 
-        if (!_fpsDebugerText.GetComponent<FPSDebuger>())
-            _fpsDebugerText.AddComponent<FPSDebuger>();
+        if (_fpsDebugerText != null) 
+        {
+            if (!_fpsDebugerText.GetComponent<FPSDebuger>())
+                _fpsDebugerText.AddComponent<FPSDebuger>();
 
-        ShowFPS(isActiveDebugUI);
+            ShowFPS(isActiveDebugUI);
+        }
     }
 
     public void UpdateText(string _text)
@@ -68,7 +68,7 @@ public class GameUICanvas : MonoBehaviour
     public GameObject GetContainer()
     {
         if (container == null)
-            container = Helper.instance.Container("UIStatsContainer", transform);
+            container = Helper.instance.CreateContainer("UIStatsContainer", transform);
 
         return container;
     }

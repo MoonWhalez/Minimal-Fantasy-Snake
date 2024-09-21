@@ -12,7 +12,7 @@ public class HeroesHandler : MonoBehaviour
 
     private GameObject container;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (instance)
         {
@@ -37,14 +37,8 @@ public class HeroesHandler : MonoBehaviour
 
     public void CreateHero() 
     {
-        Vector2Int lastDirection = Vector2Int.up;
-        Vector3 spawnPosition = MapSystemHandler.instance.GetPlayerSpawnPoint();
-
-        if (PlayerController.instance != null) 
-        {
-            lastDirection = PlayerController.instance.GetLastDirection();
-            spawnPosition = PlayerController.instance.transform.position;
-        }
+        Vector2Int lastDirection = PlayerController.instance.GetLastDirection();
+        Vector3 spawnPosition = PlayerController.instance.transform.position;
 
         Vector3 spawnOffset = Vector3.zero;
         Vector2Int spawnDirection = lastDirection;
@@ -83,17 +77,17 @@ public class HeroesHandler : MonoBehaviour
         if (randomChance >= 75)
         {
             character = new Warrior(health * 2, health * 2, atk, atkMax * 2, def * 2, defMax * 3);
-            heroObj.name = "Warrior";
+            heroObj.name = typeof(Warrior).Name;
         }
         else if (randomChance >= 50)
         {
             character = new Rouge(health, health, atk * 2, atkMax * 3, def, defMax * 2);
-            heroObj.name = "Rouge";
+            heroObj.name = typeof(Rouge).Name;
         }
         else if (randomChance < 50)
         {
             character = new Wizard(health, health, atk * 3, atkMax * 4, def, defMax);
-            heroObj.name = "Wizard";
+            heroObj.name = typeof(Wizard).Name;
         }
 
         heroObj.name += $" {heroObj.transform.GetSiblingIndex()}";
@@ -122,7 +116,7 @@ public class HeroesHandler : MonoBehaviour
     public GameObject GetContainer()
     {
         if (container == null)
-            container = Helper.instance.Container("HeroesContainer", transform);
+            container = Helper.instance.CreateContainer("HeroesContainer", transform);
 
         return container;
     }

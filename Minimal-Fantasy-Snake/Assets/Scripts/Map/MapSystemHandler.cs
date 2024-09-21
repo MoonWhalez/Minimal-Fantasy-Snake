@@ -19,7 +19,7 @@ public class MapSystemHandler : MonoBehaviour
     private GameObject container;
 
     // Start is called before the first frame update
-    async void Start()
+    void Awake()
     {
         if (instance)
         {
@@ -28,8 +28,6 @@ public class MapSystemHandler : MonoBehaviour
         }
 
         instance = this;
-
-        await Init();
     }
 
     void Clear()
@@ -38,10 +36,9 @@ public class MapSystemHandler : MonoBehaviour
         _blockDataList.Clear();
     }
 
-    async Task Init()
+    public async void Init()
     {
         CreateMap();
-        SpawnPlayerController();
         await Task.Yield();
         SetUpCamera();
     }
@@ -86,29 +83,6 @@ public class MapSystemHandler : MonoBehaviour
         _mapGridCount = _blockDataList.Count;
     }
 
-    void SpawnPlayerController()
-    {
-        if (PlayerController.instance == null)
-        {
-            GameObject controllerPlayer = new GameObject();
-            controllerPlayer.name = "PlayerController";
-            controllerPlayer.transform.position = _playerSpawnPoint;
-            controllerPlayer.AddComponent<PlayerController>();
-
-            GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            head.transform.SetParent(controllerPlayer.transform);
-            head.transform.localPosition = new Vector3(0, 0.5f, 0);
-            head.transform.localScale = Vector3.one * 0.5f;
-
-            Renderer renderer = head.GetComponent<Renderer>();
-            renderer.material = Helper.instance.SetColor(Color.green);
-        }
-        else
-            PlayerController.instance.transform.position = _playerSpawnPoint;
-
-        HeroesHandler.instance.CreateHero();
-    }
-
     void SetUpCamera()
     {
         Camera.main.transform.position = new Vector3(_playerSpawnPoint.x, 10, _playerSpawnPoint.z - 3);
@@ -120,18 +94,13 @@ public class MapSystemHandler : MonoBehaviour
     // Update is called once per frame
     async void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            await Init();
-            HeroesHandler.instance.Clear();
-            StatsUIHandler.instance.Clear();
-        }
+        
     }
 
     public GameObject Container()
     {
         if (container == null)
-            container = Helper.instance.Container("BlockContainer", transform);
+            container = Helper.instance.CreateContainer("BlockContainer", transform);
 
         return container;
     }

@@ -11,7 +11,7 @@ public class StatsUIHandler : MonoBehaviour
     private GameObject container;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (instance)
         {
@@ -47,7 +47,7 @@ public class StatsUIHandler : MonoBehaviour
     public GameObject GetContainer()
     {
         if (container == null) 
-            container = Helper.instance.Container("StatsUIContainer", transform);
+            container = Helper.instance.CreateContainer("StatsUIContainer", transform);
 
         return container;
     }
