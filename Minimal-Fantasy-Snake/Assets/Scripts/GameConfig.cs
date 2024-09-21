@@ -2,27 +2,52 @@ using UnityEngine;
 
 public class GameConfig : MonoBehaviour
 {
+    public static GameConfig instance;
+
     [Header("Map")]
     [SerializeField] private int _maxGridX;
     [SerializeField] private int _maxGridZ;
     [Header("Spawn Count")]
     [SerializeField] private int _heroItemSpawnCount;
     [SerializeField] private int _monstersSpawnCount;
-    [Header("Heroes Spawn Chance")]
-    [SerializeField] private int _warriorSpawnChance;
-    [SerializeField] private int _rougeSpawnChance;
-    [SerializeField] private int _wizardSpawnChance;
-    [Header("Monsters Spawn Chance")]
-    [SerializeField] private int _warriorMonsterSpawnChance;
-    [SerializeField] private int _rougeMonsterSpawnChance;
-    [SerializeField] private int _wizardMonsterSpawnChance;
+    [SerializeField] private int _SpawnCountWhenRemove;
+
+    [Header("Warrior Stats")]
+    [SerializeField] private int _maxHealthWarior;
+    [SerializeField] private int _atkMinWarior;
+    [SerializeField] private int _atkMaxWarior;
+    [SerializeField] private int _defMinWarior;
+    [SerializeField] private int _defMaxWarior;
+    [Header("Rouge Stats")]
+    [SerializeField] private int _maxHealthRouge;
+    [SerializeField] private int _atkMinRouge;
+    [SerializeField] private int _atkMaxRouge;
+    [SerializeField] private int _defMinRouge;
+    [SerializeField] private int _defMaxRouge;
+    [Header("Wizard Stats")]
+    [SerializeField] private int _maxHealthWizard;
+    [SerializeField] private int _atkMinWizard;
+    [SerializeField] private int _atkMaxWizard;
+    [SerializeField] private int _defMinWizard;
+    [SerializeField] private int _defMaxWizard;
+
+    void Awake()
+    {
+        if (instance)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+    }
 
     //map
     public int MaxGridX
     {
         get
         {
-            if(_maxGridX <= 16)
+            if (_maxGridX <= 16)
                 _maxGridX = 16;
 
             return _maxGridX;
@@ -76,92 +101,232 @@ public class GameConfig : MonoBehaviour
             _monstersSpawnCount = value <= 1 ? 1 : value;
         }
     }
-
-    //heroes spawn chance
-    public int WarriorSpawnChance
+    public int SpawnCountWhenRemove
     {
         get
         {
-            if (_warriorSpawnChance <= 0)
-                _warriorSpawnChance = 0;
+            if (_SpawnCountWhenRemove <= 1)
+                _SpawnCountWhenRemove = 1;
 
-            return _warriorSpawnChance;
+            return _SpawnCountWhenRemove;
         }
         set
         {
-            _warriorSpawnChance = value <= 0 ? 0 : value;
-        }
-    }
-    public int RougeSpawnChance
-    {
-        get
-        {
-            if (_rougeSpawnChance <= 0)
-                _rougeSpawnChance = 0;
-
-            return _rougeSpawnChance;
-        }
-        set
-        {
-            _rougeSpawnChance = value <= 0 ? 0 : value;
-        }
-    }
-    public int WizardSpawnChance
-    {
-        get
-        {
-            if (_wizardSpawnChance <= 0)
-                _wizardSpawnChance = 0;
-
-            return _wizardSpawnChance;
-        }
-        set
-        {
-            _wizardSpawnChance = value <= 0 ? 0 : value;
+            _SpawnCountWhenRemove = value <= 1 ? 1 : value;
         }
     }
 
-    //monster spawn chance
-    public int WarriorMonsterSpawnChance
+    //heroes stats
+    public int MaxHealthWarior
     {
         get
         {
-            if (_warriorMonsterSpawnChance <= 0)
-                _warriorMonsterSpawnChance = 0;
+            if (_maxHealthWarior <= 1)
+                _maxHealthWarior = 1;
 
-            return _warriorMonsterSpawnChance;
+            return _maxHealthWarior;
         }
         set
         {
-            _warriorMonsterSpawnChance = value <= 0 ? 0 : value;
+            _maxHealthWarior = value <= 1 ? 1 : value;
         }
     }
-    public int RougeMonsterSpawnChance
+    public int AtkMinWarior
     {
         get
         {
-            if (_rougeMonsterSpawnChance <= 0)
-                _rougeMonsterSpawnChance = 0;
+            if (_atkMinWarior <= 1)
+                _atkMinWarior = 1;
 
-            return _rougeMonsterSpawnChance;
+            return _atkMinWarior;
         }
         set
         {
-            _rougeMonsterSpawnChance = value <= 0 ? 0 : value;
+            _atkMinWarior = value <= 1 ? 1 : value;
         }
     }
-    public int WizardMonsterSpawnChance
+    public int AtkMaxWarior
     {
         get
         {
-            if (_wizardMonsterSpawnChance <= 0)
-                _wizardMonsterSpawnChance = 0;
+            if (_atkMaxWarior <= 1)
+                _atkMaxWarior = 1;
 
-            return _wizardMonsterSpawnChance;
+            return _atkMaxWarior;
         }
         set
         {
-            _wizardMonsterSpawnChance = value <= 0 ? 0 : value;
+            _atkMaxWarior = value <= 1 ? 1 : value;
+        }
+    }
+    public int DefMinWarior
+    {
+        get
+        {
+            if (_defMinWarior <= 1)
+                _defMinWarior = 1;
+
+            return _defMinWarior;
+        }
+        set
+        {
+            _defMinWarior = value <= 1 ? 1 : value;
+        }
+    }
+    public int DefMaxWarior
+    {
+        get
+        {
+            if (_defMaxWarior <= 1)
+                _defMaxWarior = 1;
+
+            return _defMaxWarior;
+        }
+        set
+        {
+            _defMaxWarior = value <= 1 ? 1 : value;
+        }
+    }
+
+    public int MaxHealthRouge
+    {
+        get
+        {
+            if (_maxHealthRouge <= 1)
+                _maxHealthRouge = 1;
+
+            return _maxHealthRouge;
+        }
+        set
+        {
+            _maxHealthRouge = value <= 1 ? 1 : value;
+        }
+    }
+    public int AtkMinRouge
+    {
+        get
+        {
+            if (_atkMinRouge <= 1)
+                _atkMinRouge = 1;
+
+            return _atkMinRouge;
+        }
+        set
+        {
+            _atkMinRouge = value <= 1 ? 1 : value;
+        }
+    }
+    public int AtkMaxRouge
+    {
+        get
+        {
+            if (_atkMaxRouge <= 1)
+                _atkMaxRouge = 1;
+
+            return _atkMaxRouge;
+        }
+        set
+        {
+            _atkMaxRouge = value <= 1 ? 1 : value;
+        }
+    }
+    public int DefMinRouge
+    {
+        get
+        {
+            if (_defMinRouge <= 1)
+                _defMinRouge = 1;
+
+            return _defMinRouge;
+        }
+        set
+        {
+            _defMinRouge = value <= 1 ? 1 : value;
+        }
+    }
+    public int DefMaxRouge
+    {
+        get
+        {
+            if (_defMaxRouge <= 1)
+                _defMaxRouge = 1;
+
+            return _defMaxRouge;
+        }
+        set
+        {
+            _defMaxRouge = value <= 1 ? 1 : value;
+        }
+    }
+
+    public int MaxHealthWizard
+    {
+        get
+        {
+            if (_maxHealthWizard <= 1)
+                _maxHealthWizard = 1;
+
+            return _maxHealthWizard;
+        }
+        set
+        {
+            _maxHealthWizard = value <= 1 ? 1 : value;
+        }
+    }
+    public int AtkMinWizard
+    {
+        get
+        {
+            if (_atkMinWizard <= 1)
+                _atkMinWizard = 1;
+
+            return _atkMinWizard;
+        }
+        set
+        {
+            _atkMinWizard = value <= 1 ? 1 : value;
+        }
+    }
+    public int AtkMaxWizard
+    {
+        get
+        {
+            if (_atkMaxWizard <= 1)
+                _atkMaxWizard = 1;
+
+            return _atkMaxWizard;
+        }
+        set
+        {
+            _atkMaxWizard = value <= 1 ? 1 : value;
+        }
+    }
+    public int DefMinWizard
+    {
+        get
+        {
+            if (_defMinWizard <= 1)
+                _defMinWizard = 1;
+
+            return _defMinWizard;
+        }
+        set
+        {
+            _defMinWizard = value <= 1 ? 1 : value;
+        }
+    }
+    public int DefMaxWizard
+    {
+        get
+        {
+            if (_defMaxWizard <= 1)
+                _defMaxWizard = 1;
+
+            return _defMaxWizard;
+        }
+        set
+        {
+            _defMaxWizard = value <= 1 ? 1 : value;
         }
     }
 }

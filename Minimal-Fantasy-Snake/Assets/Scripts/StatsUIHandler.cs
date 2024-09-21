@@ -28,7 +28,7 @@ public class StatsUIHandler : MonoBehaviour
             item.UpdatePosition();
     }
 
-    public StatsUI CreateStatsUI(Transform _transform, float _size = 100f, float _offset = 2.5f) 
+    public StatsUI CreateStatsUI(Transform _transform, float _size = 100f, float _offset = 1f) 
     {
         GameObject obj = new GameObject(); //TODO change to prefab to handle more ui
         obj.name = $"StatsUI {_transform.name}";

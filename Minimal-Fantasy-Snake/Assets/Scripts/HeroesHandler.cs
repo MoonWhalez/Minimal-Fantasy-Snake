@@ -66,27 +66,37 @@ public class HeroesHandler : MonoBehaviour
         renderer.material = Helper.instance.SetColor(Color.white);
 
         Character character = new();
-        int health = 10;
-        int atk = 10;
-        int atkMax = 10;
-        int def = 10;
-        int defMax = 10;
-
+        
         int randomChance = Random.Range(0, 101);
 
         if (randomChance >= 75)
         {
-            character = new Warrior(health * 2, health * 2, atk, atkMax * 2, def * 2, defMax * 3);
+            character = new Warrior(GameConfig.instance.MaxHealthWarior, 
+                                    GameConfig.instance.MaxHealthWarior, 
+                                    GameConfig.instance.AtkMinWarior, 
+                                    GameConfig.instance.AtkMaxWarior, 
+                                    GameConfig.instance.DefMinWarior, 
+                                    GameConfig.instance.DefMaxWarior);
             heroObj.name = typeof(Warrior).Name;
         }
         else if (randomChance >= 50)
         {
-            character = new Rouge(health, health, atk * 2, atkMax * 3, def, defMax * 2);
+            character = new Rouge(GameConfig.instance.MaxHealthRouge,
+                                    GameConfig.instance.MaxHealthRouge,
+                                    GameConfig.instance.AtkMinRouge,
+                                    GameConfig.instance.AtkMaxRouge,
+                                    GameConfig.instance.DefMinRouge,
+                                    GameConfig.instance.DefMaxRouge);
             heroObj.name = typeof(Rouge).Name;
         }
         else if (randomChance < 50)
         {
-            character = new Wizard(health, health, atk * 3, atkMax * 4, def, defMax);
+            character = new Wizard(GameConfig.instance.MaxHealthWizard,
+                                    GameConfig.instance.MaxHealthWizard,
+                                    GameConfig.instance.AtkMinWizard,
+                                    GameConfig.instance.AtkMaxWizard,
+                                    GameConfig.instance.DefMinWizard,
+                                    GameConfig.instance.DefMaxWizard);
             heroObj.name = typeof(Wizard).Name;
         }
 
