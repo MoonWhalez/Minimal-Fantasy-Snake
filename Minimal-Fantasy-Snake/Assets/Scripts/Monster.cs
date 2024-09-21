@@ -33,6 +33,7 @@ public class Monster : MonoBehaviour
         statsUI = _statsUI;
         await Task.Delay(1);
         statsUI.UpdatePosition();
+        statsUI.SetStatsText(character);
     }
 
     private void OnDestroy()

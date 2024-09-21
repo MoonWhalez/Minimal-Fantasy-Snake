@@ -18,8 +18,8 @@ public class CharacterWarrior : Character
 
     public CharacterWarrior() 
     {
-        SetHealth(HeroesConfig.instance.MaxHealthWarior, HeroesConfig.instance.MaxHealthWarior);
-        SetAtk(HeroesConfig.instance.AtkMinWarior, HeroesConfig.instance.AtkMaxWarior);
-        SetDef(HeroesConfig.instance.DefMinWarior, HeroesConfig.instance.DefMaxWarior);
+        SetHealth(CharacterConfig.instance.MaxHealthWarior, CharacterConfig.instance.MaxHealthWarior);
+        SetAtk(CharacterConfig.instance.AtkMinWarior, CharacterConfig.instance.AtkMaxWarior);
+        SetDef(CharacterConfig.instance.DefMinWarior, CharacterConfig.instance.DefMaxWarior);
     }
 }

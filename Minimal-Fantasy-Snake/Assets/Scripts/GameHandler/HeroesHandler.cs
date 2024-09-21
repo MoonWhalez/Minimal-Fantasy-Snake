@@ -65,7 +65,7 @@ public class HeroesHandler : MonoBehaviour
         Renderer renderer = heroObj.GetComponent<Renderer>();
         renderer.material = Helper.instance.SetColor(Color.white);
 
-        Character character = null;
+        Character character = new();
         
         int randomChance = Random.Range(0, 101);
 

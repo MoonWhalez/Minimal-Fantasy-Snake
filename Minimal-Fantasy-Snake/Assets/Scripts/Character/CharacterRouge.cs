@@ -18,8 +18,8 @@ public class CharacterRouge : Character
 
     public CharacterRouge()
     {
-        SetHealth(HeroesConfig.instance.MaxHealthRouge, HeroesConfig.instance.MaxHealthRouge);
-        SetAtk(HeroesConfig.instance.AtkMinRouge, HeroesConfig.instance.AtkMaxRouge);
-        SetDef(HeroesConfig.instance.DefMinRouge, HeroesConfig.instance.DefMaxRouge);
+        SetHealth(CharacterConfig.instance.MaxHealthRouge, CharacterConfig.instance.MaxHealthRouge);
+        SetAtk(CharacterConfig.instance.AtkMinRouge, CharacterConfig.instance.AtkMaxRouge);
+        SetDef(CharacterConfig.instance.DefMinRouge, CharacterConfig.instance.DefMaxRouge);
     }
 }

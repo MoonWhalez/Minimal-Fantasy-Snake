@@ -17,8 +17,8 @@ public class CharacterWizard : Character
     }
     public CharacterWizard() 
     {
-        SetHealth(HeroesConfig.instance.MaxHealthWizard, HeroesConfig.instance.MaxHealthWizard);
-        SetAtk(HeroesConfig.instance.AtkMinWizard, HeroesConfig.instance.AtkMaxWizard);
-        SetDef(HeroesConfig.instance.DefMinWizard, HeroesConfig.instance.DefMaxWizard);
+        SetHealth(CharacterConfig.instance.MaxHealthWizard, CharacterConfig.instance.MaxHealthWizard);
+        SetAtk(CharacterConfig.instance.AtkMinWizard, CharacterConfig.instance.AtkMaxWizard);
+        SetDef(CharacterConfig.instance.DefMinWizard, CharacterConfig.instance.DefMaxWizard);
     }
 }

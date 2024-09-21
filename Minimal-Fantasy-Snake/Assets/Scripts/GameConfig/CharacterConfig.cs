@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class HeroesConfig : MonoBehaviour
+public class CharacterConfig : MonoBehaviour
 {
-    public static HeroesConfig instance;
+    public static CharacterConfig instance;
 
     [Header("Warrior Stats")]
     [SerializeField] private int _maxHealthWarior;

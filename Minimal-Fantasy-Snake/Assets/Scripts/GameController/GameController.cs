@@ -6,7 +6,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private PrefabConfig PrefabConfig;
     [SerializeField] private MapConfig MapConfig;
     [SerializeField] private SpawnConfig SpawnConfig;
-    [SerializeField] private HeroesConfig HeroesConfig;
+    [SerializeField] private CharacterConfig CharacterConfig;
     [SerializeField] private Helper Helper;
     [SerializeField] private MapSystemHandler MapSystemHandler;
     [SerializeField] private GameUICanvas GameUICanvas;
@@ -38,10 +38,10 @@ public class GameController : MonoBehaviour
         else
             SpawnConfig = gameObject.AddComponent<SpawnConfig>();
 
-        if (TryGetComponent(out HeroesConfig heroesConfig))
-            HeroesConfig = heroesConfig;
+        if (TryGetComponent(out CharacterConfig heroesConfig))
+            CharacterConfig = heroesConfig;
         else
-            HeroesConfig = gameObject.AddComponent<HeroesConfig>();
+            CharacterConfig = gameObject.AddComponent<CharacterConfig>();
 
         InitGameHandlers();
     }
