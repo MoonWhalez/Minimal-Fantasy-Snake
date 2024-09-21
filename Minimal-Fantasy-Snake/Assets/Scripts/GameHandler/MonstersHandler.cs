@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class ItemHandler : MonoBehaviour
+public class MonstersHandler : MonoBehaviour
 {
-    public static ItemHandler instance;
+    public static MonstersHandler instance;
 
-    [SerializeField] private List<Monster> _itemList = new();
+    [SerializeField] private List<Monster> _monstersList = new();
 
     private GameObject container;
 
@@ -21,14 +22,16 @@ public class ItemHandler : MonoBehaviour
         instance = this;
     }
 
-    public void CreateItem(Vector3 _position)
+    public void CreateMonster(Vector3 _position)
     {
         Vector3 spawnOffset = new Vector3(_position.x, 0.5f, _position.z);
-        Monster monster = NewItem(spawnOffset);
+        Monster monster = NewMonster(spawnOffset);
 
+        StatsUI statsUI = StatsUIHandler.instance.CreateStatsUI(monster.transform, _offset: 1f);
+        monster.SetStatsUI(statsUI);
     }
 
-    public Monster NewItem(Vector3 _position)
+    public Monster NewMonster(Vector3 _position)
     {
         GameObject monsterObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         monsterObj.transform.position = _position;
@@ -36,29 +39,25 @@ public class ItemHandler : MonoBehaviour
         Renderer renderer = monsterObj.GetComponent<Renderer>();
         renderer.material = Helper.instance.SetColor(Color.red);
 
-        Character character = new();
-        int health = 10;
-        int atk = 10;
-        int atkMax = 10;
-        int def = 10;
-        int defMax = 10;
-
+        Character character = null;
+      
         int randomChance = Random.Range(0, 101);
 
         if (randomChance >= 75)
         {
-            character = new Warrior(health * 2, health * 2, atk, atkMax * 2, def * 2, defMax * 3);
-            monsterObj.name = typeof(Warrior).Name;
+            character = new CharacterWarrior();
+
+            monsterObj.name = typeof(CharacterWarrior).Name;
         }
         else if (randomChance >= 50)
         {
-            character = new Rouge(health, health, atk * 2, atkMax * 3, def, defMax * 2);
-            monsterObj.name = typeof(Rouge).Name;
+            character = new CharacterRouge();
+            monsterObj.name = typeof(CharacterRouge).Name;
         }
         else if (randomChance < 50)
         {
-            character = new Wizard(health, health, atk * 3, atkMax * 4, def, defMax);
-            monsterObj.name = typeof(Wizard).Name;
+            character = new CharacterWizard();
+            monsterObj.name = typeof(CharacterWizard).Name;
         }
 
         monsterObj.name += $" {monsterObj.transform.GetSiblingIndex()}";
@@ -66,26 +65,32 @@ public class ItemHandler : MonoBehaviour
         monster.SetCharacter(character);
         monster.SetPosition(_position);
 
-        _itemList.Add(monster);
+        _monstersList.Add(monster);
 
         MapSystemHandler.instance.UpdateBlockDataCharacter();
         return monster;
     }
-    public List<Monster> GetItemsList()
+    public List<Monster> GetMonstersList()
     {
-        return _itemList;
+        return _monstersList;
     }
 
-    public void RemoveItem(GameObject _character)
+    public void RemoveCharacter(GameObject _character)
     {
-        _itemList.Remove(_character.GetComponent<Monster>());
+        _monstersList.Remove(_character.GetComponent<Monster>());
         Destroy(_character);
+    }
+
+    public void Clear()
+    {
+        DestroyImmediate(container);
+        _monstersList.Clear();
     }
 
     public GameObject GetContainer()
     {
         if (container == null)
-            container = Helper.instance.CreateContainer("ItemsContainer", transform);
+            container = Helper.instance.CreateContainer("MonstersContainer", transform);
 
         return container;
     }

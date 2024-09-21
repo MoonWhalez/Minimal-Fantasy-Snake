@@ -1,8 +1,13 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StatsUI : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI _HpText;
+    [SerializeField] private TextMeshProUGUI _AtkText;
+    [SerializeField] private TextMeshProUGUI _DefText;
+
     private Image image;
     private RectTransform rectTransform; // Cached reference to RectTransform
     private Camera mainCamera; // Cached reference to the main camera
@@ -34,6 +39,13 @@ public class StatsUI : MonoBehaviour
     public void SetOffset(float _offset) 
     {
         offset = _offset;
+    }
+
+    public void SetStatsText(Character character) 
+    {
+        _HpText.text = $"{character.GetHealth()}/{character.GetHealthMax()}";
+        _AtkText.text = $"{character.GetAtk()}/{character.GetAtkMax()}";
+        _DefText.text = $"{character.GetDef()}/{character.GetDefMax()}";
     }
 
     public void Show(bool _isActive)

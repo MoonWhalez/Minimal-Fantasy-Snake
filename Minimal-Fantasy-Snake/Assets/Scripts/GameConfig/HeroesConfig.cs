@@ -1,16 +1,8 @@
 using UnityEngine;
 
-public class GameConfig : MonoBehaviour
+public class HeroesConfig : MonoBehaviour
 {
-    public static GameConfig instance;
-
-    [Header("Map")]
-    [SerializeField] private int _maxGridX;
-    [SerializeField] private int _maxGridZ;
-    [Header("Spawn Count")]
-    [SerializeField] private int _heroItemSpawnCount;
-    [SerializeField] private int _monstersSpawnCount;
-    [SerializeField] private int _SpawnCountWhenRemove;
+    public static HeroesConfig instance;
 
     [Header("Warrior Stats")]
     [SerializeField] private int _maxHealthWarior;
@@ -42,81 +34,6 @@ public class GameConfig : MonoBehaviour
         instance = this;
     }
 
-    //map
-    public int MaxGridX
-    {
-        get
-        {
-            if (_maxGridX <= 16)
-                _maxGridX = 16;
-
-            return _maxGridX;
-        }
-        set
-        {
-            _maxGridX = value <= 16 ? 16 : value;
-        }
-    }
-    public int MaxGridZ
-    {
-        get
-        {
-            if (_maxGridZ <= 16)
-                _maxGridZ = 16;
-
-            return _maxGridZ;
-        }
-        set
-        {
-            _maxGridZ = value <= 16 ? 16 : value;
-        }
-    }
-
-    //spawn count
-    public int HeroItemSpawnCount
-    {
-        get
-        {
-            if (_heroItemSpawnCount <= 1)
-                _heroItemSpawnCount = 1;
-
-            return _heroItemSpawnCount;
-        }
-        set
-        {
-            _heroItemSpawnCount = value <= 1 ? 1 : value;
-        }
-    }
-    public int MonstersSpawnCount
-    {
-        get
-        {
-            if (_monstersSpawnCount <= 1)
-                _monstersSpawnCount = 1;
-
-            return _monstersSpawnCount;
-        }
-        set
-        {
-            _monstersSpawnCount = value <= 1 ? 1 : value;
-        }
-    }
-    public int SpawnCountWhenRemove
-    {
-        get
-        {
-            if (_SpawnCountWhenRemove <= 1)
-                _SpawnCountWhenRemove = 1;
-
-            return _SpawnCountWhenRemove;
-        }
-        set
-        {
-            _SpawnCountWhenRemove = value <= 1 ? 1 : value;
-        }
-    }
-
-    //heroes stats
     public int MaxHealthWarior
     {
         get

@@ -3,7 +3,10 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private GameConfig GameConfig;
+    [SerializeField] private PrefabConfig PrefabConfig;
+    [SerializeField] private MapConfig MapConfig;
+    [SerializeField] private SpawnConfig SpawnConfig;
+    [SerializeField] private HeroesConfig HeroesConfig;
     [SerializeField] private Helper Helper;
     [SerializeField] private MapSystemHandler MapSystemHandler;
     [SerializeField] private GameUICanvas GameUICanvas;
@@ -15,10 +18,30 @@ public class GameController : MonoBehaviour
 
     void Awake()
     {
-        if (TryGetComponent(out GameConfig gameConfig))
-            GameConfig = gameConfig;
+        if(TryGetComponent(out PrefabConfig prefabConfig)) 
+        {
+            PrefabConfig = prefabConfig;
+        }
+        else 
+        {
+            Debug.LogError("Please Add PrefabConfig in GameController and Setup Prefab!");
+            return;
+        }
+
+        if (TryGetComponent(out MapConfig mapConfig))
+            MapConfig = mapConfig;
         else
-            GameConfig = gameObject.AddComponent<GameConfig>();
+            MapConfig = gameObject.AddComponent<MapConfig>();
+
+        if (TryGetComponent(out SpawnConfig spawnConfig))
+            SpawnConfig = spawnConfig;
+        else
+            SpawnConfig = gameObject.AddComponent<SpawnConfig>();
+
+        if (TryGetComponent(out HeroesConfig heroesConfig))
+            HeroesConfig = heroesConfig;
+        else
+            HeroesConfig = gameObject.AddComponent<HeroesConfig>();
 
         InitGameHandlers();
     }
@@ -80,7 +103,7 @@ public class GameController : MonoBehaviour
 
     void ReadConfig()
     {
-        MapSystemHandler.SetGridValue(GameConfig.MaxGridX, GameConfig.MaxGridZ);
+        MapSystemHandler.SetGridValue(MapConfig.MaxGridX, MapConfig.MaxGridZ);
     }
 
     void StartGame()
@@ -100,7 +123,7 @@ public class GameController : MonoBehaviour
         HeroesHandler.CreateHero();
 
         //create monster
-        int monsterCount = GameConfig.MonstersSpawnCount;
+        int monsterCount = SpawnConfig.MonstersSpawnCount;
         for (int i = 0; i < monsterCount; i++)
         {
             Vector3 spawnPoint = MapSystemHandler.GetRandomPositionFromAvilableBlockList();
@@ -109,7 +132,7 @@ public class GameController : MonoBehaviour
         }
 
         //create heroItem
-        int heroItemCount = GameConfig.HeroItemSpawnCount;
+        int heroItemCount = SpawnConfig.HeroItemSpawnCount;
         for (int i = 0; i < heroItemCount; i++)
         {
             Vector3 spawnPoint = MapSystemHandler.GetRandomPositionFromAvilableBlockList();

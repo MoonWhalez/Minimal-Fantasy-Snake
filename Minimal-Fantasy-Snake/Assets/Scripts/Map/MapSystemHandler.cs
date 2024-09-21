@@ -69,7 +69,6 @@ public class MapSystemHandler : MonoBehaviour
                     Destroy(collider);
 
                 BlockData blockData = block.AddComponent<BlockData>();
-                blockData.SetID(block.transform.GetSiblingIndex() + 1);
                 blockData.SetPosition(new Vector3(i + 0.5f, -0.5f, j + 0.5f));
 
                 _blockDataList.Add(blockData);

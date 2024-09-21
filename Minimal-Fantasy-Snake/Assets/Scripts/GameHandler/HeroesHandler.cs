@@ -65,39 +65,24 @@ public class HeroesHandler : MonoBehaviour
         Renderer renderer = heroObj.GetComponent<Renderer>();
         renderer.material = Helper.instance.SetColor(Color.white);
 
-        Character character = new();
+        Character character = null;
         
         int randomChance = Random.Range(0, 101);
 
         if (randomChance >= 75)
         {
-            character = new Warrior(GameConfig.instance.MaxHealthWarior, 
-                                    GameConfig.instance.MaxHealthWarior, 
-                                    GameConfig.instance.AtkMinWarior, 
-                                    GameConfig.instance.AtkMaxWarior, 
-                                    GameConfig.instance.DefMinWarior, 
-                                    GameConfig.instance.DefMaxWarior);
-            heroObj.name = typeof(Warrior).Name;
+            character = new CharacterWarrior();
+            heroObj.name = typeof(CharacterWarrior).Name;
         }
         else if (randomChance >= 50)
         {
-            character = new Rouge(GameConfig.instance.MaxHealthRouge,
-                                    GameConfig.instance.MaxHealthRouge,
-                                    GameConfig.instance.AtkMinRouge,
-                                    GameConfig.instance.AtkMaxRouge,
-                                    GameConfig.instance.DefMinRouge,
-                                    GameConfig.instance.DefMaxRouge);
-            heroObj.name = typeof(Rouge).Name;
+            character = new CharacterRouge();
+            heroObj.name = typeof(CharacterRouge).Name;
         }
         else if (randomChance < 50)
         {
-            character = new Wizard(GameConfig.instance.MaxHealthWizard,
-                                    GameConfig.instance.MaxHealthWizard,
-                                    GameConfig.instance.AtkMinWizard,
-                                    GameConfig.instance.AtkMaxWizard,
-                                    GameConfig.instance.DefMinWizard,
-                                    GameConfig.instance.DefMaxWizard);
-            heroObj.name = typeof(Wizard).Name;
+            character = new CharacterWizard();
+            heroObj.name = typeof(CharacterWizard).Name;
         }
 
         heroObj.name += $" {heroObj.transform.GetSiblingIndex()}";

@@ -27,6 +27,7 @@ public class Monster : MonoBehaviour
     {
         return character.GetPosition();
     }
+
     public async void SetStatsUI(StatsUI _statsUI)
     {
         statsUI = _statsUI;

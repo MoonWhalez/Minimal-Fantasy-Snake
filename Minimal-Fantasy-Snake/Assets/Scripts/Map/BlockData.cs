@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BlockData : MonoBehaviour
 {
-    [SerializeField] private int id;
     [SerializeField] private Vector3 position;
     [SerializeField] private Character character;
     [SerializeField] private Item item;
@@ -19,16 +18,6 @@ public class BlockData : MonoBehaviour
     void Update()
     {
         
-    }
-
-    public void SetID(int _id) 
-    {
-        id = _id;
-    }
-
-    public int GetID() 
-    {
-        return id;
     }
 
     public void SetPosition(Vector3 _position) 

@@ -30,11 +30,16 @@ public class StatsUIHandler : MonoBehaviour
 
     public StatsUI CreateStatsUI(Transform _transform, float _size = 100f, float _offset = 1f) 
     {
-        GameObject obj = new GameObject(); //TODO change to prefab to handle more ui
+        GameObject obj = Instantiate(PrefabConfig.instance.StatsUI); //TODO change to prefab to handle more ui
         obj.name = $"StatsUI {_transform.name}";
         obj.transform.SetParent(GetContainer().transform);
 
-        StatsUI _statsUI = obj.AddComponent<StatsUI>();
+        StatsUI _statsUI = null;
+        if (obj.TryGetComponent(out StatsUI statsUI))
+             _statsUI = statsUI;
+        else
+             _statsUI = obj.AddComponent<StatsUI>();
+
         _statsUI.Show(true);
         _statsUI.SetTartget(_transform);
         _statsUI.SetSize(_size);

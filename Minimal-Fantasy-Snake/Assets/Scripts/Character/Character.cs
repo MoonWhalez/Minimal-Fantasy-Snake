@@ -31,18 +31,25 @@ public class Character
         health = _current;
         healthMax = _max;
     }
+    public int GetHealth() { return health; }
+    public int GetHealthMax() {  return healthMax; }
 
     public void SetAtk(int _min, int _max)
     {
         atk = _min;
         atkMax = _max;
     }
+    public int GetAtk() {  return atk; }
+    public int GetAtkMax() {  return atkMax; }
 
     public void SetDef(int _min, int _max)
     {
         def = _min;
         defMax = _max;
     }
+    public int GetDef() { return def; }
+    public int GetDefMax() {  return defMax; }
+
 
     public void SetPosition(Vector3 _position)
     {
