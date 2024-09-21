@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -88,14 +87,14 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("watchout! it's a cliff, your leader flying to nowhere.. . .");
 
-            if (HeroesHandler.instance.GetHeroesList().Count > 0) 
+            if (HeroesHandler.instance.GetHeroesList().Count > 0)
             {
                 HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0].gameObject);
                 direction = Vector2Int.zero;
                 lastDirection = direction;
             }
 
-            if (HeroesHandler.instance.GetHeroesList().Count > 1) 
+            if (HeroesHandler.instance.GetHeroesList().Count > 1)
             {
                 direction = -HeroesHandler.instance.GetHeroesList()[1].GetDirection();
                 lastDirection = direction;
@@ -103,8 +102,21 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            BlockData blockData = MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.GetPosition().x == movePosition.x && x.GetPosition().z == movePosition.z);
 
-            transform.position = movePosition;
+            if (blockData.GetCharacter() != null)
+            {
+                if (blockData.GetCharacter() is Monster)
+                {
+                    Fight(blockData.GetCharacter());
+                }
+                else
+                {
+                    PickItem();
+                }
+            }
+            else
+                transform.position = movePosition;
         }
 
         List<Hero> heroes = HeroesHandler.instance.GetHeroesList();
@@ -128,6 +140,27 @@ public class PlayerController : MonoBehaviour
 
         MapSystemHandler.instance.UpdateBlockDataCharacter();
         StatsUIHandler.instance.UpdateUIPosition();
+    }
+
+    void Fight(Character _target)
+    {
+        Hero hero = HeroesHandler.instance.GetHeroesList().First();
+
+        //calculate monster dmg
+        int atk = Random.Range(_target.GetAtk(), _target.GetAtkMax());
+        int def = Random.Range(hero.GetCharacter().GetAtk(), hero.GetCharacter().GetAtkMax());
+        int dmg = atk - def;
+        //hero.takeDmg();
+
+        //calculate hero dmg
+        atk = Random.Range(hero.GetCharacter().GetAtk(), hero.GetCharacter().GetAtkMax());
+        def = Random.Range(_target.GetAtk(), _target.GetAtkMax());
+        dmg = atk - def;
+        //monster.takeDmg();
+    }
+
+    void PickItem()
+    {
     }
 
     public Vector2Int GetLastDirection()
