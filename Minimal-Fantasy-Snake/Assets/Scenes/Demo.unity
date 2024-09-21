@@ -269,12 +269,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f18ec5f26d126a48b6fbd666ed97f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameConfig: {fileID: 0}
   Helper: {fileID: 0}
   MapSystemHandler: {fileID: 0}
   GameUICanvas: {fileID: 0}
   StatsUIHandler: {fileID: 0}
   PlayerController: {fileID: 0}
   HeroesHandler: {fileID: 0}
+  MonstersHandler: {fileID: 0}
+  ItemHandler: {fileID: 0}
 --- !u!4 &384292138
 Transform:
   m_ObjectHideFlags: 0

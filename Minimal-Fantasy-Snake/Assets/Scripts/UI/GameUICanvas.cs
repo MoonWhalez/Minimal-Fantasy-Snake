@@ -1,5 +1,4 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,8 +37,8 @@ public class GameUICanvas : MonoBehaviour
 
         if (_fpsDebugerText != null) 
         {
-            if (!_fpsDebugerText.GetComponent<FPSDebuger>())
-                _fpsDebugerText.AddComponent<FPSDebuger>();
+            if (!_fpsDebugerText.gameObject.GetComponent<FPSDebuger>())
+                _fpsDebugerText.gameObject.AddComponent<FPSDebuger>();
 
             ShowFPS(isActiveDebugUI);
         }

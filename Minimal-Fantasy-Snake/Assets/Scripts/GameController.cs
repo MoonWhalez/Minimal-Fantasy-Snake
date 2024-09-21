@@ -3,15 +3,23 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    [SerializeField] private GameConfig GameConfig;
     [SerializeField] private Helper Helper;
     [SerializeField] private MapSystemHandler MapSystemHandler;
     [SerializeField] private GameUICanvas GameUICanvas;
     [SerializeField] private StatsUIHandler StatsUIHandler;
     [SerializeField] private PlayerController PlayerController;
     [SerializeField] private HeroesHandler HeroesHandler;
+    [SerializeField] private MonstersHandler MonstersHandler;
+    [SerializeField] private ItemHandler ItemHandler;
 
     void Awake()
     {
+        if (TryGetComponent(out GameConfig gameConfig))
+            GameConfig = gameConfig;
+        else
+            GameConfig = gameObject.AddComponent<GameConfig>();
+
         InitGameHandlers();
     }
 
@@ -47,15 +55,67 @@ public class GameController : MonoBehaviour
             GameObject obj = CreateChildObj(typeof(HeroesHandler).Name);
             HeroesHandler = obj.AddComponent<HeroesHandler>();
         }
+        if (MonstersHandler == null)
+        {
+            GameObject obj = CreateChildObj(typeof(MonstersHandler).Name);
+            MonstersHandler = obj.AddComponent<MonstersHandler>();
+        }
+        if (ItemHandler == null)
+        {
+            GameObject obj = CreateChildObj(typeof(ItemHandler).Name);
+            ItemHandler = obj.AddComponent<ItemHandler>();
+        }
     }
 
     void Start()
     {
+        SetupGame();
+    }
+
+    void SetupGame() 
+    {
+        ReadConfig();
+        StartGame();
+    }
+
+    void ReadConfig()
+    {
+        MapSystemHandler.SetGridValue(GameConfig.MaxGridX, GameConfig.MaxGridZ);
+    }
+
+    void StartGame()
+    {
+        HeroesHandler.Clear();
+        MonstersHandler.Clear();
+        StatsUIHandler.Clear();
+
+        //create map
         MapSystemHandler.Init();
+
+        //create canvas for statsUI
         GameUICanvas.Init();
 
+        //create player
         SpawnPlayerController();
         HeroesHandler.CreateHero();
+
+        //create monster
+        int monsterCount = GameConfig.MonstersSpawnCount;
+        for (int i = 0; i < monsterCount; i++)
+        {
+            Vector3 spawnPoint = MapSystemHandler.GetRandomPositionFromAvilableBlockList();
+            if (spawnPoint != Vector3.zero)
+                MonstersHandler.CreateMonster(spawnPoint);
+        }
+
+        //create heroItem
+        int heroItemCount = GameConfig.HeroItemSpawnCount;
+        for (int i = 0; i < heroItemCount; i++)
+        {
+            Vector3 spawnPoint = MapSystemHandler.GetRandomPositionFromAvilableBlockList();
+            if (spawnPoint != Vector3.zero)
+            { }
+        }
     }
 
     void SpawnPlayerController()
@@ -77,11 +137,7 @@ public class GameController : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.M))
-        {
-            MapSystemHandler.Init();
-            HeroesHandler.Clear();
-            StatsUIHandler.Clear();
-        }
+            SetupGame();
     }
 
     GameObject CreateChildObj(string _name, Transform _parent = null)
@@ -103,7 +159,8 @@ public class GameController : MonoBehaviour
         GameObject obj = new GameObject();
         Canvas canvas = obj.AddComponent<Canvas>();
         canvas.name = _name;
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.renderMode = renderMode;
+        canvas.sortingOrder = _orderLayer;
 
         CanvasScaler canvasScaler = obj.AddComponent<CanvasScaler>();
 
@@ -131,5 +188,5 @@ public class GameController : MonoBehaviour
         canvasScaler.screenMatchMode = _screenMatchMode;
     }
 
-   
+
 }

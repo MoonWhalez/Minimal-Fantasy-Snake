@@ -6,7 +6,7 @@ public class StatsUI : MonoBehaviour
     private Image image;
     private RectTransform rectTransform; // Cached reference to RectTransform
     private Camera mainCamera; // Cached reference to the main camera
-    public float test = 2.5f;
+    public float offset = 1f;
 
     [SerializeField] private Transform targetTransform;
 
@@ -31,6 +31,10 @@ public class StatsUI : MonoBehaviour
     {
         rectTransform.sizeDelta = new Vector2(_size, _size / 2);
     }
+    public void SetOffset(float _offset) 
+    {
+        offset = _offset;
+    }
 
     public void Show(bool _isActive)
     {
@@ -42,7 +46,7 @@ public class StatsUI : MonoBehaviour
         if (targetTransform == null)
             return;
 
-        Vector3 screenPosition = mainCamera.WorldToScreenPoint(targetTransform.position + new Vector3(0, test, 0));
+        Vector3 screenPosition = mainCamera.WorldToScreenPoint(targetTransform.position + new Vector3(0, offset, 0));
         rectTransform.position = screenPosition;
     }
 }

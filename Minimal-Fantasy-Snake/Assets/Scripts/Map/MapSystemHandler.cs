@@ -15,6 +15,7 @@ public class MapSystemHandler : MonoBehaviour
     [SerializeField] private Vector3 _playerSpawnPoint;
     [SerializeField] private BlockData _playerSpawnBlock;
     [SerializeField] private List<BlockData> _blockDataList = new();
+    [SerializeField] private List<BlockData> _avilableBlockDataList = new();
 
     private GameObject container;
 
@@ -90,13 +91,6 @@ public class MapSystemHandler : MonoBehaviour
         Camera.main.transform.SetParent(PlayerController.instance.transform);
     }
 
-
-    // Update is called once per frame
-    async void Update()
-    {
-        
-    }
-
     public GameObject Container()
     {
         if (container == null)
@@ -110,24 +104,70 @@ public class MapSystemHandler : MonoBehaviour
         return _blockDataList;
     }
 
+    public List<BlockData> GetAvilableBlockDataList()
+    {
+        return _avilableBlockDataList;
+    }
+
     public void UpdateBlockDataCharacter()
     {
-        foreach (BlockData item in _blockDataList)
-            item.SetCharacter(null);
+        _avilableBlockDataList.Clear();
+
+        foreach (BlockData block in _blockDataList)
+        {
+            block.SetCharacter(null);
+            _avilableBlockDataList.Add(block);
+        }
 
         List<Hero> heroList = HeroesHandler.instance.GetHeroesList();
+        List<Monster> monsterList = MonstersHandler.instance.GetMonstersList();
+        List<Monster> itemList = ItemHandler.instance.GetItemsList();
+
+        List<Character> characters = new();
+
         foreach (Hero hero in heroList)
+            characters.Add(hero.GetCharacter());
+        foreach (Monster monster in monsterList)
+            characters.Add(monster.GetCharacter());
+        foreach (Monster item in itemList)
+            characters.Add(item.GetCharacter());
+
+        foreach (Character character in characters)
         {
-            BlockData block = _blockDataList.FirstOrDefault(x => x.GetPosition().x == hero.GetPosition().x &&
-            x.GetPosition().z == hero.GetPosition().z);
+            BlockData block = _blockDataList.FirstOrDefault(x => x.GetPosition().x == character.GetPosition().x &&
+            x.GetPosition().z == character.GetPosition().z);
 
             if (block != null)
-                block.SetCharacter(hero.GetCharacter());
+            {
+                block.SetCharacter(character);
+                _avilableBlockDataList.Remove(block);
+            }
         }
+
+    }
+
+    public Vector3 GetRandomPositionFromAvilableBlockList()
+    {
+        if(_avilableBlockDataList.Count > 0) 
+        {
+            int index = Random.Range(0, _avilableBlockDataList.Count);
+
+            Vector3 spawnPoint = _avilableBlockDataList[index].GetPosition();
+            return spawnPoint;
+        }
+
+        Debug.LogError("Map is full! no Avilable Block!");
+        return Vector3.zero;
     }
 
     public Vector3 GetPlayerSpawnPoint()
     {
         return _playerSpawnPoint;
+    }
+
+    public void SetGridValue(int _maxX, int _maxZ) 
+    {
+        _maxGridX = _maxX;
+        _maxGridZ = _maxZ;
     }
 }

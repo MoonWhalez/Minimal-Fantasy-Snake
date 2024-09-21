@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
 
-    private Vector2Int inputDirection = Vector2Int.up;
+    private Vector2Int inputDirection;
     private Vector2Int lastDirection;
 
     bool isMove;

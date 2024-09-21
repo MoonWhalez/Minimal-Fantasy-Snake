@@ -45,19 +45,19 @@ public class HeroesHandler : MonoBehaviour
 
         if (_heroesList.Count > 0)
         {
-            Hero newestHero = _heroesList.Last().GetComponent<Hero>();
-            spawnOffset = new Vector3(newestHero.GetDirection().x, 0, newestHero.GetDirection().y);
-            spawnPosition = newestHero.GetPosition();
-            spawnDirection = newestHero.GetDirection();
+            Hero latestHero = _heroesList.Last().GetComponent<Hero>();
+            spawnOffset = new Vector3(latestHero.GetDirection().x, 0, latestHero.GetDirection().y);
+            spawnPosition = latestHero.GetPosition();
+            spawnDirection = latestHero.GetDirection();
         }
 
-        Hero hero = CreateHero(spawnPosition - spawnOffset, spawnDirection);
+        Hero hero = NewHero(spawnPosition - spawnOffset, spawnDirection);
 
         StatsUI statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
         hero.SetStatsUI(statsUI);
     }
 
-    public Hero CreateHero(Vector3 _position, Vector2Int _direction)
+    public Hero NewHero(Vector3 _position, Vector2Int _direction)
     {
         GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         heroObj.transform.position = _position;
