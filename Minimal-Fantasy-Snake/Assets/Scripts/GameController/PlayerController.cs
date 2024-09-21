@@ -137,4 +137,10 @@ public class PlayerController : MonoBehaviour
 
         return lastDirection;
     }
+
+    public void Clear()
+    {
+        inputDirection = Vector2Int.zero;
+        lastDirection = Vector2Int.zero;
+    }
 }

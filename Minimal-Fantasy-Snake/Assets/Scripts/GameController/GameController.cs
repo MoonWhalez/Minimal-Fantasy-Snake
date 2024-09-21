@@ -143,6 +143,8 @@ public class GameController : MonoBehaviour
 
     void SpawnPlayerController()
     {
+        PlayerController.instance.Clear();
+
         GameObject controllerPlayer = PlayerController.instance.gameObject;
 
         controllerPlayer.transform.position = MapSystemHandler.instance.GetPlayerSpawnPoint();
