@@ -1,0 +1,2 @@
+- after open project with unity LTS version 
+	open Demo scene in /Asset/Scenes/Demo
