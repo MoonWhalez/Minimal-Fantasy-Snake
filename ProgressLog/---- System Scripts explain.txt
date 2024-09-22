@@ -1,0 +1,31 @@
+System Scripts
+GameController: Manages all systems and reads game configs. Uses GameController.Instance to call system commands.
+PrefabConfig: Stores all prefabs (e.g., models, effects, UI), currently just StatsUI.
+MapConfig: Holds map settings.
+SpawnConfig: Manages spawn settings.
+CharacterConfig: Stores character stats.
+Helper: Contains commonly used commands.
+MapSystemHandler: Manages map system commands.
+GameUICanvas: Organizes UI to optimize draw calls.
+AlertUI: Handles alert and confirmation dialogs.
+StatsUIHandler: Manages StatsUI.
+PlayerController: Handles player input, movement, fighting, and item pickup.
+HeroesHandler: Manages hero line.
+MonstersHandler: Controls monsters.
+CharacterItemHandler: Manages character items.
+BuffItemHandler: Planned for recovery and buff items, but incomplete.
+
+Data Scripts
+CharacterData: Stores and updates character stats.
+
+GameObject Scripts
+Character: Base class for characters (warrior, rouge, wizard). Manages position, stats, and StatsUI updates.
+CharacterWarrior/Rouge/Wizard: Inherit from Character, specific behavior incomplete.
+Item: Base class for items (character, buff, recovery). Manages position and updates character data.
+CharacterItem: Spawns a new hero when picked up.
+BuffItem/RecoveryItem: Planned for buff and recovery, but incomplete.
+BlockData: Tracks block availability for spawning items/monsters.
+ButtonToggle: Toggles a GameObject's active state.
+SettingUI: UI for map, spawn, and game settings (restart, exit).
+StartUI: Main menu UI.
+FPSDebugger: Displays FPS in-game.

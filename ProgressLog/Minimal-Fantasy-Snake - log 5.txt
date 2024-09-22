@@ -1,0 +1,48 @@
+- Using the latest Unity LTS version./done
+- Your code must be entirely your own work, without any AI assistance./done
+- Alongside the project, you must include the technical decision document in
+version control./done
+- Trust your judgment/done
+- Unity’s packages is allowed. Third-party plugins is not allowed/done
+-Documents are preferably in English. Only English and Thai are acceptable./done
+- The build must be able to build as a Windows executable./done
+- The project must be able to open and build as Windows executable using
+Unity's latest LTS without any problem. /done
+- Any technical decision during development must be logged in a text file/done
+- Using only legally usable assets.
+
+-statsUI
+	-prefab/done
+
+-collide system
+	-heroes /done
+	-monster /done
+	-item
+		-character /done
+		-buff item
+
+-game over /done
+-create monster sphere color/done
+-create item sphere color/done
+
+-game ui
+	-start button /done
+	-restart button /done
+	-config ui /done
+	
+-config
+	- start spawn count /done
+ 	- min/max stats /done
+	- chance of spawning (how many Heroes or Monsters will be
+spawned when removed) /done
+
+-extra
+	- adjust board size /done
+	- rotate heroes /done
+	- recovery item
+	- buff item
+-model asset
+	-heroes
+	-monster
+	-item
+-fix move direction to rotation and forward

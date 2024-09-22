@@ -1,0 +1,11 @@
+How to Play
+Configure map, spawner, and character settings in the settings menu.
+Once the game starts, input guides and a tip for double damage will appear at the bottom of the screen.
+
+Known Issues
+There’s a movement bug where the character always faces upward, causing incorrect movement when going off the map.
+I know how to fix this by using rotation and checking the -forward
+
+
+about Thought Process
+I can provide more details if you have any questions
