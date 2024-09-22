@@ -29,3 +29,6 @@ ButtonToggle: Toggles a GameObject's active state.
 SettingUI: UI for map, spawn, and game settings (restart, exit).
 StartUI: Main menu UI.
 FPSDebugger: Displays FPS in-game.
+
+about Thought Process
+I can provide more details if you have any questions
