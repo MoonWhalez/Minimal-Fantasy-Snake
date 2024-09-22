@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class CharacterWarrior : Character
 {
@@ -18,8 +19,8 @@ public class CharacterWarrior : Character
 
     public CharacterWarrior() 
     {
-        SetHealth(CharacterConfig.instance.MaxHealthWarior, CharacterConfig.instance.MaxHealthWarior);
-        SetAtk(CharacterConfig.instance.AtkMinWarior, CharacterConfig.instance.AtkMaxWarior);
-        SetDef(CharacterConfig.instance.DefMinWarior, CharacterConfig.instance.DefMaxWarior);
+        GetCharacterData().SetHealth(CharacterConfig.instance.MaxHealthWarior, CharacterConfig.instance.MaxHealthWarior);
+        GetCharacterData().SetAtk(CharacterConfig.instance.AtkMinWarior, CharacterConfig.instance.AtkMaxWarior);
+        GetCharacterData().SetDef(CharacterConfig.instance.DefMinWarior, CharacterConfig.instance.DefMaxWarior);
     }
 }

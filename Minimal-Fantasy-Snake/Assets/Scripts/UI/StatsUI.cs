@@ -43,9 +43,10 @@ public class StatsUI : MonoBehaviour
 
     public void SetStatsText(Character character)
     {
-        _HpText.text = $"{character.GetHealth()}/{character.GetHealthMax()}";
-        _AtkText.text = $"{character.GetAtk()}/{character.GetAtkMax()}";
-        _DefText.text = $"{character.GetDef()}/{character.GetDefMax()}";
+        CharacterData data = character.GetCharacterData();
+        _HpText.text = $"hp {data.GetHealth()}/{data.GetHealthMax()}";
+        _AtkText.text = $"atk {data.GetAtk()} - {data.GetAtkMax()}";
+        _DefText.text = $"def {data.GetDef()} - {data.GetDefMax()}";
     }
 
     public void Show(bool _isActive)

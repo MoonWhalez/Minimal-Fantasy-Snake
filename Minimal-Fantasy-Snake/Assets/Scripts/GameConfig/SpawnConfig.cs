@@ -3,11 +3,12 @@ using UnityEngine;
 public class SpawnConfig : MonoBehaviour
 {
     public static SpawnConfig instance;
-    
+
     [Header("Spawn Count")]
-    [SerializeField] private int _heroItemSpawnCount;
-    [SerializeField] private int _monstersSpawnCount;
-    [SerializeField] private int _SpawnCountWhenRemove;
+    [SerializeField] private int _startHeroItems = 10;
+    [SerializeField] private int _startMonsters = 10;
+    [SerializeField] private int _SpawnHeroItemsWhenRemove = 1;
+    [SerializeField] private int _SpawnMonstersWhenRemove = 1;
 
     void Awake()
     {
@@ -20,46 +21,62 @@ public class SpawnConfig : MonoBehaviour
         instance = this;
     }
 
-    public int HeroItemSpawnCount
+    public int StartHeroItems
     {
         get
         {
-            if (_heroItemSpawnCount <= 1)
-                _heroItemSpawnCount = 1;
+            if (_startHeroItems <= 1)
+                _startHeroItems = 1;
 
-            return _heroItemSpawnCount;
+            return _startHeroItems;
         }
         set
         {
-            _heroItemSpawnCount = value <= 1 ? 1 : value;
+            _startHeroItems = value <= 1 ? 1 : value;
         }
     }
-    public int MonstersSpawnCount
+    public int StartMonsters
     {
         get
         {
-            if (_monstersSpawnCount <= 1)
-                _monstersSpawnCount = 1;
+            if (_startMonsters <= 1)
+                _startMonsters = 1;
 
-            return _monstersSpawnCount;
+            return _startMonsters;
         }
         set
         {
-            _monstersSpawnCount = value <= 1 ? 1 : value;
+            _startMonsters = value <= 1 ? 1 : value;
         }
     }
-    public int SpawnCountWhenRemove
+
+    public int SpawnHeroItemsWhenRemove
     {
         get
         {
-            if (_SpawnCountWhenRemove <= 1)
-                _SpawnCountWhenRemove = 1;
+            if (_SpawnHeroItemsWhenRemove <= 1)
+                _SpawnHeroItemsWhenRemove = 1;
 
-            return _SpawnCountWhenRemove;
+            return _SpawnHeroItemsWhenRemove;
         }
         set
         {
-            _SpawnCountWhenRemove = value <= 1 ? 1 : value;
+            _SpawnHeroItemsWhenRemove = value <= 1 ? 1 : value;
+        }
+    }
+
+    public int SpawnMonsterWhenRemove
+    {
+        get
+        {
+            if (_SpawnMonstersWhenRemove <= 1)
+                _SpawnMonstersWhenRemove = 1;
+
+            return _SpawnMonstersWhenRemove;
+        }
+        set
+        {
+            _SpawnMonstersWhenRemove = value <= 1 ? 1 : value;
         }
     }
 }

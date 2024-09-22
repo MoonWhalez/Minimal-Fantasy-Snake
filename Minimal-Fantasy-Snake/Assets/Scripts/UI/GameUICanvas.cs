@@ -8,6 +8,9 @@ public class GameUICanvas : MonoBehaviour
     [SerializeField] private Image _loadingImage;
     [SerializeField] private TextMeshProUGUI _fpsDebugerText;
     [SerializeField] private TextMeshProUGUI _loadingText;
+    [SerializeField] private SettingUI _settingUI;
+    [SerializeField] private StartUI _startUI;
+    [SerializeField] private GameObject _gameUI;
 
     public static GameUICanvas Instance { get; private set; }
 
@@ -71,4 +74,10 @@ public class GameUICanvas : MonoBehaviour
 
         return container;
     }
+
+    public SettingUI settingUI { get { return _settingUI; } }
+
+    public StartUI startUI { get { return _startUI; } }
+
+    public GameObject gameUI { get { return _gameUI; } }
 }

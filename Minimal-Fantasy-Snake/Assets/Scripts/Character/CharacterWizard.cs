@@ -15,10 +15,10 @@ public class CharacterWizard : Character
     {
 
     }
-    public CharacterWizard() 
+    public CharacterWizard()
     {
-        SetHealth(CharacterConfig.instance.MaxHealthWizard, CharacterConfig.instance.MaxHealthWizard);
-        SetAtk(CharacterConfig.instance.AtkMinWizard, CharacterConfig.instance.AtkMaxWizard);
-        SetDef(CharacterConfig.instance.DefMinWizard, CharacterConfig.instance.DefMaxWizard);
+        GetCharacterData().SetHealth(CharacterConfig.instance.MaxHealthWizard, CharacterConfig.instance.MaxHealthWizard);
+        GetCharacterData().SetAtk(CharacterConfig.instance.AtkMinWizard, CharacterConfig.instance.AtkMaxWizard);
+        GetCharacterData().SetDef(CharacterConfig.instance.DefMinWizard, CharacterConfig.instance.DefMaxWizard);
     }
 }

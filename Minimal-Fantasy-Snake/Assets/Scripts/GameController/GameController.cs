@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public static GameController instance;
+
     [SerializeField] private PrefabConfig PrefabConfig;
     [SerializeField] private MapConfig MapConfig;
     [SerializeField] private SpawnConfig SpawnConfig;
@@ -10,19 +12,29 @@ public class GameController : MonoBehaviour
     [SerializeField] private Helper Helper;
     [SerializeField] private MapSystemHandler MapSystemHandler;
     [SerializeField] private GameUICanvas GameUICanvas;
+    [SerializeField] private AlertUI AlertUI;
     [SerializeField] private StatsUIHandler StatsUIHandler;
     [SerializeField] private PlayerController PlayerController;
     [SerializeField] private HeroesHandler HeroesHandler;
     [SerializeField] private MonstersHandler MonstersHandler;
-    [SerializeField] private ItemHandler ItemHandler;
+    [SerializeField] private CharacterItemHandler CharacterItemHandler;
+    [SerializeField] private BuffItemHandler BuffItemHandler;
 
     void Awake()
     {
-        if(TryGetComponent(out PrefabConfig prefabConfig)) 
+        if (instance)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+
+        if (TryGetComponent(out PrefabConfig prefabConfig))
         {
             PrefabConfig = prefabConfig;
         }
-        else 
+        else
         {
             Debug.LogError("Please Add PrefabConfig in GameController and Setup Prefab!");
             return;
@@ -67,6 +79,7 @@ public class GameController : MonoBehaviour
         {
             GameObject obj = CreateChildObj(typeof(StatsUIHandler).Name, GameUICanvas.transform);
             StatsUIHandler = obj.AddComponent<StatsUIHandler>();
+            StatsUIHandler.transform.SetSiblingIndex(0);
         }
         if (PlayerController == null)
         {
@@ -83,20 +96,30 @@ public class GameController : MonoBehaviour
             GameObject obj = CreateChildObj(typeof(MonstersHandler).Name);
             MonstersHandler = obj.AddComponent<MonstersHandler>();
         }
-        if (ItemHandler == null)
+        if (CharacterItemHandler == null)
         {
-            GameObject obj = CreateChildObj(typeof(ItemHandler).Name);
-            ItemHandler = obj.AddComponent<ItemHandler>();
+            GameObject obj = CreateChildObj(typeof(CharacterItemHandler).Name);
+            CharacterItemHandler = obj.AddComponent<CharacterItemHandler>();
         }
+        if (BuffItemHandler == null)
+        {
+            GameObject obj = CreateChildObj(typeof(BuffItemHandler).Name);
+            BuffItemHandler = obj.AddComponent<BuffItemHandler>();
+        }
+
+        if (AlertUI == null)
+            Debug.LogError("Please Add AlertUI in GameController!");
     }
 
     void Start()
     {
-        SetupGame();
+        AlertUI.ShowConfirmAlert(false);
+        GameUICanvas.gameUI.SetActive(false);
     }
 
-    void SetupGame() 
+    public void SetupGame()
     {
+        GameUICanvas.gameUI.SetActive(true);
         ReadConfig();
         StartGame();
     }
@@ -111,6 +134,7 @@ public class GameController : MonoBehaviour
         HeroesHandler.Clear();
         MonstersHandler.Clear();
         StatsUIHandler.Clear();
+        CharacterItemHandler.Clear();
 
         //create map
         MapSystemHandler.Init();
@@ -120,25 +144,49 @@ public class GameController : MonoBehaviour
 
         //create player
         SpawnPlayerController();
-        HeroesHandler.CreateHero();
+
+        Character character = RandomCharacter();
+        HeroesHandler.CreateHero(character);
 
         //create monster
-        int monsterCount = SpawnConfig.MonstersSpawnCount;
+        int monsterCount = SpawnConfig.StartMonsters;
         for (int i = 0; i < monsterCount; i++)
         {
             Vector3 spawnPoint = MapSystemHandler.GetRandomPositionFromAvilableBlockList();
             if (spawnPoint != Vector3.zero)
                 MonstersHandler.CreateMonster(spawnPoint);
+            else
+                break;
         }
 
         //create heroItem
-        int heroItemCount = SpawnConfig.HeroItemSpawnCount;
+        int heroItemCount = SpawnConfig.StartHeroItems;
         for (int i = 0; i < heroItemCount; i++)
         {
             Vector3 spawnPoint = MapSystemHandler.GetRandomPositionFromAvilableBlockList();
             if (spawnPoint != Vector3.zero)
-            { }
+            {
+                character = RandomCharacter();
+
+                CharacterItemHandler.CreateItem(character, spawnPoint);
+            }
+            else
+                break;
         }
+    }
+
+    public Character RandomCharacter()
+    {
+        int randomClass = Random.Range(1, 4);
+        Character character = null;
+        if (randomClass == 1)
+            character = new CharacterWarrior();
+        else if (randomClass == 2)
+            character = new CharacterRouge();
+        else if (randomClass == 3)
+            character = new CharacterWizard();
+
+        return character;
     }
 
     void SpawnPlayerController()
@@ -149,13 +197,13 @@ public class GameController : MonoBehaviour
 
         controllerPlayer.transform.position = MapSystemHandler.instance.GetPlayerSpawnPoint();
 
-        GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        head.transform.SetParent(controllerPlayer.transform);
-        head.transform.localPosition = new Vector3(0, 0.5f, 0);
-        head.transform.localScale = Vector3.one * 0.5f;
+        //GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //head.transform.SetParent(controllerPlayer.transform);
+        //head.transform.localPosition = new Vector3(0, 0.5f, 0);
+        //head.transform.localScale = Vector3.one * 0.5f;
 
-        Renderer renderer = head.GetComponent<Renderer>();
-        renderer.material = Helper.instance.SetColor(Color.green);
+        //Renderer renderer = head.GetComponent<Renderer>();
+        //renderer.material = Helper.instance.SetColor(Color.green);
     }
 
     // Update is called once per frame
@@ -213,5 +261,14 @@ public class GameController : MonoBehaviour
         canvasScaler.screenMatchMode = _screenMatchMode;
     }
 
+    public void StartMenu()
+    {
+        HeroesHandler.Clear();
+        MonstersHandler.Clear();
+        StatsUIHandler.Clear();
+        CharacterItemHandler.Clear();
+        MapSystemHandler.Clear();
 
+        GameUICanvas.Instance.startUI.gameObject.SetActive(true);
+    }
 }

@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private Vector2Int lastDirection;
     private Vector3 movePosition;
     bool isMove;
+
     private void Awake()
     {
         if (instance)
@@ -28,8 +29,12 @@ public class PlayerController : MonoBehaviour
 
     void HandleInput()
     {
-        //TODO : Change Arrow to Gamepad direction
+        if (Input.GetKeyDown(KeyCode.Q))
+            HeroesHandler.instance.RotateHeroes(_isRotateTop: true);
+        if (Input.GetKeyDown(KeyCode.E))
+            HeroesHandler.instance.RotateHeroes(_isRotateTop: false);
 
+        //TODO : Change Arrow to Gamepad direction
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             inputDirection = Vector2Int.up;
@@ -73,7 +78,9 @@ public class PlayerController : MonoBehaviour
             return true;
         }
 
-        Debug.LogError("can not move backward!");
+        AlertUI.instance.SetAlertText("watchout!", "can not move backward!");
+        AlertUI.instance.ShowAlert();
+        Debug.Log("can not move backward!");
         isMove = false;
 
         return false;
@@ -86,7 +93,9 @@ public class PlayerController : MonoBehaviour
 
         if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.GetPosition().x == movePosition.x && x.GetPosition().z == movePosition.z) == null)
         {
-            Debug.LogError("watchout! it's a cliff, your leader flying to nowhere.. . .");
+            AlertUI.instance.SetAlertText("watchout!", "it's a cliff, your leader flying to nowhere.. . .");
+            AlertUI.instance.ShowAlert();
+            Debug.Log("watchout! it's a cliff, your leader flying to nowhere.. . .");
 
             if (HeroesHandler.instance.GetHeroesList().Count > 0)
             {
@@ -97,9 +106,12 @@ public class PlayerController : MonoBehaviour
 
             if (HeroesHandler.instance.GetHeroesList().Count > 1)
             {
-                direction = -HeroesHandler.instance.GetHeroesList()[1].GetDirection();
+                direction = -HeroesHandler.instance.GetHeroesList()[1].GetCharacterData().GetDirection();
                 lastDirection = direction;
             }
+
+            isPartyMove = true;
+
         }
         else
         {
@@ -109,16 +121,32 @@ public class PlayerController : MonoBehaviour
             {
                 if (blockData.GetCharacter())
                 {
-                    bool canMove = Fight(blockData.GetCharacter());
-                    isPartyMove = canMove;
+
+                    if (HeroesHandler.instance.GetHeroesList().Contains(blockData.GetCharacter()))
+                    {
+                        AlertUI.instance.SetAlertText("Game Over!", "you attack your party! want to restart ?");
+                        AlertUI.instance.SetAlertButtonsAction(GameController.instance.SetupGame, GameController.instance.StartMenu);
+                        AlertUI.instance.ShowConfirmAlert(true);
+                        Debug.Log("you attack your party! party is disband!");
+                        enabled = false;
+                        return;
+                    }
+                    else
+                    {
+                        bool canMove = Fight(blockData.GetCharacter());
+                        isPartyMove = canMove;
+                    }
+
                 }
-                else if (blockData.GetItem())
-                {
-                    PickItem();
-                }
+
             }
-            else 
+            else
             {
+                if (blockData.GetItem() != null)
+                {
+                    PickItem(blockData.GetItem());
+                }
+
                 transform.position = movePosition;
                 isPartyMove = true;
             }
@@ -134,13 +162,16 @@ public class PlayerController : MonoBehaviour
                 {
                     if (i > 0)
                     {
-                        heroes[i].SetPosition(heroes[i - 1].GetPosition());
-                        heroes[i].SetDirection(heroes[i - 1].GetDirection());
+                        heroes[i].GetCharacterData().SetPosition(heroes[i - 1].GetCharacterData().GetPosition());
+                        heroes[i].SetPosition();
+
+                        heroes[i].GetCharacterData().SetDirection(heroes[i - 1].GetCharacterData().GetDirection());
                     }
                     else
                     {
-                        heroes[i].SetPosition(transform.position);
-                        heroes[i].SetDirection(direction);
+                        heroes[i].GetCharacterData().SetPosition(transform.position);
+                        heroes[i].SetPosition();
+                        heroes[i].GetCharacterData().SetDirection(direction);
                     }
                 }
             }
@@ -155,54 +186,76 @@ public class PlayerController : MonoBehaviour
         Character hero = HeroesHandler.instance.GetHeroesList().First();
 
         //calculate monster dmg
-        int atk = Random.Range(_target.GetAtk(), _target.GetAtkMax());
+        int atk = Random.Range(_target.GetCharacterData().GetAtk(), _target.GetCharacterData().GetAtkMax());
         if (_target is CharacterWarrior && hero is CharacterRouge ||
             _target is CharacterRouge && hero is CharacterWizard ||
             _target is CharacterWizard && hero is CharacterWarrior)
             atk *= 2;
 
-        int def = Random.Range(hero.GetDef(), hero.GetDefMax());
+        int def = Random.Range(hero.GetCharacterData().GetDef(), hero.GetCharacterData().GetDefMax());
         int dmg = atk - def;
 
-        hero.TakeDamage(dmg);
+        hero.GetCharacterData().TakeDamage(dmg);
+        hero.UpdateStatsUI();
 
         //calculate hero dmg
-        atk = Random.Range(hero.GetAtk(), hero.GetAtkMax());
+        atk = Random.Range(hero.GetCharacterData().GetAtk(), hero.GetCharacterData().GetAtkMax());
         if (hero is CharacterWarrior && _target is CharacterRouge ||
            hero is CharacterRouge && _target is CharacterWizard ||
            hero is CharacterWizard && _target is CharacterWarrior)
             atk *= 2;
 
-        def = Random.Range(_target.GetDef(), _target.GetDefMax());
+        def = Random.Range(_target.GetCharacterData().GetDef(), _target.GetCharacterData().GetDefMax());
         dmg = atk - def;
 
-        _target.TakeDamage(dmg);
+        _target.GetCharacterData().TakeDamage(dmg);
+        _target.UpdateStatsUI();
 
-        Debug.Log($"hero health {hero.GetHealth()}");
-        Debug.Log($"_target health {hero.GetHealth()}");
+        Debug.Log($"hero health {hero.GetCharacterData().GetHealth()} _target health {_target.GetCharacterData().GetHealth()}");
 
-        if (hero.GetHealth() <= 0 && _target.GetHealth() <= 0)
+        if (_target.GetCharacterData().GetHealth() <= 0)
         {
-            Debug.Log("hero and monster dead");
+            int count = SpawnConfig.instance.SpawnMonsterWhenRemove;
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 spawnPoint = MapSystemHandler.instance.GetRandomPositionFromAvilableBlockList();
+                if (spawnPoint != Vector3.zero)
+                {
+                    MonstersHandler.instance.CreateMonster(spawnPoint);
+                }
+                else
+                    break;
+            }
+        }
+
+        if (hero.GetCharacterData().GetHealth() <= 0 && _target.GetCharacterData().GetHealth() <= 0)
+        {
+            AlertUI.instance.SetAlertText("Battle Result!", "hero and monster are dead.. . .");
+            AlertUI.instance.ShowAlert();
+            Debug.Log("hero and monster are dead");
             HeroesHandler.instance.RemoveCharacter(hero);
             MonstersHandler.instance.RemoveCharacter(_target);
             return true; //hero and monster dead
         }
-        if (hero.GetHealth() <= 0 && _target.GetHealth() > 0)
+        if (hero.GetCharacterData().GetHealth() <= 0 && _target.GetCharacterData().GetHealth() > 0)
         {
-            Debug.Log("hero dead but monster alive");
+            AlertUI.instance.SetAlertText("Battle Result!", "hero is dead but monster still alive.. . .");
+            AlertUI.instance.ShowAlert();
+            Debug.Log("hero is dead but monster still alive");
             HeroesHandler.instance.RemoveCharacter(hero);
             return true; //hero dead but monster alive
         }
-        if (hero.GetHealth() > 0 && _target.GetHealth() <= 0)
+        if (hero.GetCharacterData().GetHealth() > 0 && _target.GetCharacterData().GetHealth() <= 0)
         {
-            Debug.Log("hero alive but monster dead");
+            AlertUI.instance.SetAlertText("Battle Result!", "hero is alive and monster is dead!");
+            AlertUI.instance.ShowAlert();
+            Debug.Log("hero is alive and monster is dead!");
             MonstersHandler.instance.RemoveCharacter(_target);
             transform.position = movePosition;
             return true; //hero alive but monster dead
         }
 
-        if (hero.GetHealth() > 0 && _target.GetHealth() > 0) 
+        if (hero.GetCharacterData().GetHealth() > 0 && _target.GetCharacterData().GetHealth() > 0)
         {
             Debug.Log("no one dead");
             return false; //no one dead
@@ -211,8 +264,28 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    void PickItem()
+    void PickItem(Item _item)
     {
+        if (_item is CharacterItem)
+        {
+            CharacterItem characterItem = (CharacterItem)_item;
+            HeroesHandler.instance.CreateHero(characterItem.GetCharacter());
+
+            CharacterItemHandler.instance.RemoveItem(_item);
+
+            int count = SpawnConfig.instance.SpawnHeroItemsWhenRemove;
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 spawnPoint = MapSystemHandler.instance.GetRandomPositionFromAvilableBlockList();
+                if (spawnPoint != Vector3.zero)
+                {
+                    Character character = GameController.instance.RandomCharacter();
+                    CharacterItemHandler.instance.CreateItem(character, spawnPoint);
+                }
+                else
+                    break;
+            }
+        }
     }
 
     public Vector2Int GetLastDirection()
@@ -225,6 +298,7 @@ public class PlayerController : MonoBehaviour
 
     public void Clear()
     {
+        enabled = true;
         inputDirection = Vector2Int.zero;
         lastDirection = Vector2Int.zero;
     }

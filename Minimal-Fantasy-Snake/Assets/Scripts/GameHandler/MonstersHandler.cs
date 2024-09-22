@@ -38,6 +38,12 @@ public class MonstersHandler : MonoBehaviour
         Renderer renderer = monsterObj.GetComponent<Renderer>();
         renderer.material = Helper.instance.SetColor(Color.red);
 
+        GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        head.transform.SetParent(monsterObj.transform);
+        head.transform.localPosition = new Vector3(0, 0.5f, 0);
+        head.transform.localScale = Vector3.one * 0.8f;
+        renderer = head.GetComponent<Renderer>();
+
         Character character = null;
       
         int randomChance = Random.Range(0, 101);
@@ -45,27 +51,30 @@ public class MonstersHandler : MonoBehaviour
         if (randomChance >= 75)
         {
             character = monsterObj.AddComponent<CharacterWarrior>();
+            renderer.material = Helper.instance.SetColor(Color.red);
             monsterObj.name = typeof(CharacterWarrior).Name;
         }
         else if (randomChance >= 50)
         {
             character = monsterObj.AddComponent<CharacterRouge>();
+            renderer.material = Helper.instance.SetColor(Color.green);
             monsterObj.name = typeof(CharacterRouge).Name;
         }
         else if (randomChance < 50)
         {
             character = monsterObj.AddComponent<CharacterWizard>();
+            renderer.material = Helper.instance.SetColor(Color.blue);
             monsterObj.name = typeof(CharacterWizard).Name;
         }
 
         monsterObj.name += $" {monsterObj.transform.GetSiblingIndex()}";
-        Character monster = character;
-        monster.SetPosition(_position);
+        character.GetCharacterData().SetPosition(_position);
+        character.SetPosition();
 
-        _monstersList.Add(monster);
+        _monstersList.Add(character);
 
         MapSystemHandler.instance.UpdateBlockDataCharacter();
-        return monster;
+        return character;
     }
     public List<Character> GetMonstersList()
     {

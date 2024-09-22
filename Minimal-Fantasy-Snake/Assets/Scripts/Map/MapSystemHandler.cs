@@ -32,7 +32,7 @@ public class MapSystemHandler : MonoBehaviour
         instance = this;
     }
 
-    void Clear()
+    public void Clear()
     {
         DestroyImmediate(container);
         _blockDataList.Clear();
@@ -45,7 +45,7 @@ public class MapSystemHandler : MonoBehaviour
         SetUpCamera();
     }
 
-    void CreateMap()
+    public void CreateMap()
     {
         Clear();
 
@@ -121,7 +121,7 @@ public class MapSystemHandler : MonoBehaviour
 
         List<Character> heroList = HeroesHandler.instance.GetHeroesList();
         List<Character> monsterList = MonstersHandler.instance.GetMonstersList();
-        List<Item> itemList = ItemHandler.instance.GetItemsList();
+        List<Item> itemList = CharacterItemHandler.instance.GetItemsList();
 
         List<Character> characters = new();
 
@@ -132,8 +132,8 @@ public class MapSystemHandler : MonoBehaviour
         
         foreach (Character character in characters)
         {
-            BlockData block = _blockDataList.FirstOrDefault(x => x.GetPosition().x == character.GetPosition().x &&
-            x.GetPosition().z == character.GetPosition().z);
+            BlockData block = _blockDataList.FirstOrDefault(x => x.GetPosition().x == character.GetCharacterData().GetPosition().x &&
+            x.GetPosition().z == character.GetCharacterData().GetPosition().z);
 
             if (block != null)
             {

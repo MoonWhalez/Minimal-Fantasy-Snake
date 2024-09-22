@@ -23,19 +23,7 @@ public class HeroesHandler : MonoBehaviour
         instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q)) //TODO : copy this when implement rotate function
-            RotateHeroes(_isRotateTop: true);
-        if (Input.GetKeyDown(KeyCode.E)) //TODO : copy this when implement rotate function
-            RotateHeroes(_isRotateTop: false);
-
-        if (Input.GetKeyDown(KeyCode.P)) //TODO : copy this when implement collide function
-            CreateHero();
-    }
-
-    public void CreateHero() 
+    public void CreateHero(Character _character)
     {
         Vector2Int lastDirection = PlayerController.instance.GetLastDirection();
         Vector3 spawnPosition = PlayerController.instance.transform.position;
@@ -45,19 +33,19 @@ public class HeroesHandler : MonoBehaviour
 
         if (_heroesList.Count > 0)
         {
-            Character latestHero = _heroesList.Last().GetComponent<Character>();
+            CharacterData latestHero = _heroesList.Last().GetComponent<Character>().GetCharacterData();
             spawnOffset = new Vector3(latestHero.GetDirection().x, 0, latestHero.GetDirection().y);
             spawnPosition = latestHero.GetPosition();
             spawnDirection = latestHero.GetDirection();
         }
 
-        Character hero = NewHero(spawnPosition - spawnOffset, spawnDirection);
+        Character hero = NewHero(_character, spawnPosition - spawnOffset, spawnDirection);
 
         StatsUI statsUI = StatsUIHandler.instance.CreateStatsUI(hero.transform);
         hero.SetStatsUI(statsUI);
     }
 
-    public Character NewHero(Vector3 _position, Vector2Int _direction)
+    public Character NewHero(Character _character, Vector3 _position, Vector2Int _direction)
     {
         GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         heroObj.transform.position = _position;
@@ -65,41 +53,58 @@ public class HeroesHandler : MonoBehaviour
         Renderer renderer = heroObj.GetComponent<Renderer>();
         renderer.material = Helper.instance.SetColor(Color.white);
 
-        Character character = null;
-        
-        int randomChance = Random.Range(0, 101);
+        Character character = _character;
 
-        if (randomChance >= 75)
+        GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        head.transform.SetParent(heroObj.transform);
+        head.transform.localPosition = new Vector3(0, 0.5f, 0);
+        head.transform.localScale = Vector3.one * 0.8f;
+        renderer = head.GetComponent<Renderer>();
+
+        if (_character is CharacterWarrior)
         {
             character = heroObj.AddComponent<CharacterWarrior>();
             heroObj.name = typeof(CharacterWarrior).Name;
+            renderer.material = Helper.instance.SetColor(Color.red);
         }
-        else if (randomChance >= 50)
+        else if (_character is CharacterRouge)
         {
             character = heroObj.AddComponent<CharacterRouge>();
             heroObj.name = typeof(CharacterRouge).Name;
+            renderer.material = Helper.instance.SetColor(Color.green);
         }
-        else if (randomChance < 50)
+        else if (_character is CharacterWizard)
         {
             character = heroObj.AddComponent<CharacterWizard>();
             heroObj.name = typeof(CharacterWizard).Name;
+            renderer.material = Helper.instance.SetColor(Color.blue);
         }
 
         heroObj.name += $" {heroObj.transform.GetSiblingIndex()}";
-        Character hero = character;
-        hero.SetPosition(_position);
-        hero.SetDirection(_direction);
 
-        _heroesList.Add(hero);
+        CharacterData data = character.GetCharacterData();
+        data.SetPosition(_position);
+        data.SetDirection(_direction);
+
+        character.SetPosition();
+        _heroesList.Add(character);
 
         MapSystemHandler.instance.UpdateBlockDataCharacter();
-        return hero;
+        return character;
     }
 
     public void RemoveCharacter(Character _character)
     {
         _heroesList.Remove(_character);
         Destroy(_character.gameObject);
+
+        if(_heroesList.Count <= 0) 
+        {
+            PlayerController.instance.enabled = false;
+            AlertUI.instance.SetAlertText("Game Over!", "no one left in this party! want to restart ?");
+            AlertUI.instance.SetAlertButtonsAction(GameController.instance.SetupGame, GameController.instance.StartMenu);
+            AlertUI.instance.ShowConfirmAlert(true);
+        }
     }
 
     public List<Character> GetHeroesList()
@@ -132,8 +137,8 @@ public class HeroesHandler : MonoBehaviour
 
         for (int i = 0; i < heroCount; i++)
         {
-            _positions.Add(_heroesList[i].GetPosition());
-            _directions.Add(_heroesList[i].GetDirection());
+            _positions.Add(_heroesList[i].GetCharacterData().GetPosition());
+            _directions.Add(_heroesList[i].GetCharacterData().GetDirection());
         }
 
         if (_isRotateTop)
@@ -155,12 +160,15 @@ public class HeroesHandler : MonoBehaviour
 
         for (int i = 0; i < _positions.Count; i++)
             RotateHeroesPostion(i);
+
+        StatsUIHandler.instance.UpdateUIPosition();
     }
 
     Character RotateHeroesPostion(int _index)
     {
-        _heroesList[_index].SetPosition(_positions[_index]);
-        _heroesList[_index].SetDirection(_directions[_index]);
+        _heroesList[_index].GetCharacterData().SetPosition(_positions[_index]);
+        _heroesList[_index].GetCharacterData().SetDirection(_directions[_index]);
+        _heroesList[_index].SetPosition();
         _heroesList[_index].transform.SetSiblingIndex(_index);
 
         return _heroesList[_index];

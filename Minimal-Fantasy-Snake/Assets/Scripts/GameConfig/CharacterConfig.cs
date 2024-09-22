@@ -5,23 +5,23 @@ public class CharacterConfig : MonoBehaviour
     public static CharacterConfig instance;
 
     [Header("Warrior Stats")]
-    [SerializeField] private int _maxHealthWarior;
-    [SerializeField] private int _atkMinWarior;
-    [SerializeField] private int _atkMaxWarior;
-    [SerializeField] private int _defMinWarior;
-    [SerializeField] private int _defMaxWarior;
+    [SerializeField] private int _maxHealthWarior = 10;
+    [SerializeField] private int _atkMinWarior = 3;
+    [SerializeField] private int _atkMaxWarior = 5;
+    [SerializeField] private int _defMinWarior = 8;
+    [SerializeField] private int _defMaxWarior = 10;
     [Header("Rouge Stats")]
-    [SerializeField] private int _maxHealthRouge;
-    [SerializeField] private int _atkMinRouge;
-    [SerializeField] private int _atkMaxRouge;
-    [SerializeField] private int _defMinRouge;
-    [SerializeField] private int _defMaxRouge;
+    [SerializeField] private int _maxHealthRouge = 10;
+    [SerializeField] private int _atkMinRouge = 3;
+    [SerializeField] private int _atkMaxRouge = 8;
+    [SerializeField] private int _defMinRouge = 5;
+    [SerializeField] private int _defMaxRouge = 10;
     [Header("Wizard Stats")]
-    [SerializeField] private int _maxHealthWizard;
-    [SerializeField] private int _atkMinWizard;
-    [SerializeField] private int _atkMaxWizard;
-    [SerializeField] private int _defMinWizard;
-    [SerializeField] private int _defMaxWizard;
+    [SerializeField] private int _maxHealthWizard = 10;
+    [SerializeField] private int _atkMinWizard = 8;
+    [SerializeField] private int _atkMaxWizard = 10;
+    [SerializeField] private int _defMinWizard = 3;
+    [SerializeField] private int _defMaxWizard = 5;
 
     void Awake()
     {

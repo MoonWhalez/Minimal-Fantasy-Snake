@@ -7,7 +7,7 @@ public class MapConfig : MonoBehaviour
     [Header("Map")]
     [SerializeField] private int _maxGridX;
     [SerializeField] private int _maxGridZ;
-   
+
 
     void Awake()
     {
@@ -32,7 +32,12 @@ public class MapConfig : MonoBehaviour
         }
         set
         {
-            _maxGridX = value <= 16 ? 16 : value;
+            if (value <= 16)
+                value = 16;
+            if (value >= 50)
+                value = 50;
+
+            _maxGridX = value;
         }
     }
     public int MaxGridZ
@@ -46,7 +51,12 @@ public class MapConfig : MonoBehaviour
         }
         set
         {
-            _maxGridZ = value <= 16 ? 16 : value;
+            if (value <= 16)
+                value = 16;
+            if (value >= 50)
+                value = 50;
+
+            _maxGridZ = value;
         }
     }
 }
