@@ -39,14 +39,15 @@ public class PlayerInput : MonoBehaviour
 
     bool IsValidMove(Direction direction, Direction lastDirection)
     {
-        if (Mathf.Abs((int)direction - (int)lastDirection) == 180)
+        if (Mathf.Abs((int)direction - (int)lastDirection) == 180) 
+        {
+            AlertUI.instance.SetAlertText("watchout!", "can not move backward!");
+            AlertUI.instance.ShowAlert();
+            Debug.Log("can not move backward!");
             return false;
+        }
         else
             return true;
-
-        AlertUI.instance.SetAlertText("watchout!", "can not move backward!");
-        AlertUI.instance.ShowAlert();
-        Debug.Log("can not move backward!");
     }
 }
 

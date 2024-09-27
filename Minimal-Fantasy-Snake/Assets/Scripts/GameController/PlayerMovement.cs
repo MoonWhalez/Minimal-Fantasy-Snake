@@ -23,14 +23,16 @@ public class PlayerMovement : MonoBehaviour
                 {
                     heroes[i].GetCharacterData().SetPosition(heroes[i - 1].GetCharacterData().GetPosition());
                     heroes[i].SetPosition();
-
                     heroes[i].GetCharacterData().SetDirection(heroes[i - 1].GetCharacterData().GetDirection());
+                    heroes[i].SetDirection();
+
                 }
                 else
                 {
                     heroes[i].GetCharacterData().SetPosition(transform.position);
                     heroes[i].SetPosition();
                     heroes[i].GetCharacterData().SetDirection(dir);
+                    heroes[i].SetDirection();
                 }
             }
         }

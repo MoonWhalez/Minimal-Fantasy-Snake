@@ -179,6 +179,7 @@ public class HeroesHandler : MonoBehaviour
         _heroesList[_index].GetCharacterData().SetPosition(_positions[_index]);
         _heroesList[_index].GetCharacterData().SetDirection(_directions[_index]);
         _heroesList[_index].SetPosition();
+        _heroesList[_index].SetDirection();
         _heroesList[_index].transform.SetSiblingIndex(_index);
 
         return _heroesList[_index];

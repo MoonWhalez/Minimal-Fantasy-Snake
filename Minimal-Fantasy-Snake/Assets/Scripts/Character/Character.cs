@@ -15,6 +15,12 @@ public class Character : MonoBehaviour
         transform.position = characterData.GetPosition();
     }
 
+    public void SetDirection()
+    {
+        Direction dir = characterData.GetDirection();
+        transform.eulerAngles = new Vector3(0, (int)dir, 0);
+    }
+
     public async void SetStatsUI(StatsUI _statsUI)
     {
         statsUI = _statsUI;

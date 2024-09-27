@@ -39,7 +39,6 @@ public class PlayerController : MonoBehaviour
         CurrentCharacter = HeroesHandler.instance.GetHeroesList().First();
     }
 
-    int text = 0;
     void Update()
     {
         if (CurrentCharacter == null)
@@ -113,7 +112,7 @@ public class PlayerController : MonoBehaviour
 
         if (HeroesHandler.instance.GetHeroesList().Count > 0)
         {
-            HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0]);
+            HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList().First());
         }
     }
 
