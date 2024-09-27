@@ -23,15 +23,41 @@ public class Helper : MonoBehaviour
         GameObject container = new GameObject();
         container.name = _name;
         container.transform.SetParent(_parent);
-        
+
         return container;
     }
 
-    public Material SetColor(Color _color) 
+    public Material SetColor(Color _color)
     {
         Material material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
         material.color = _color;
 
         return material;
+    }
+
+    public Vector2 AngleToDirection(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.Up:
+                return new Vector2(0, 1);
+            case Direction.Right:
+                return new Vector2(1, 0);
+            case Direction.Down:
+                return new Vector2(0, -1);
+            case Direction.Left:
+                return new Vector2(-1, 0);
+        case Direction.None:
+        default:
+                return Vector2.zero;
+        }
+    }
+
+    public float HandleMinusDegree(float degree)
+    {
+        if (degree < 0)
+            degree += 360;
+
+        return degree;
     }
 }

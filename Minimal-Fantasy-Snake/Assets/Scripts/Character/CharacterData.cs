@@ -11,7 +11,7 @@ public class CharacterData
     private int def;
     private int defMax;
     private Vector3 position;
-    private Vector2Int direction;
+    private Direction direction;
 
     public void SetHealth(int _current, int _max)
     {
@@ -42,7 +42,7 @@ public class CharacterData
         position = _position;
     }
 
-    public void SetDirection(Vector2Int _direction)
+    public void SetDirection(Direction _direction)
     {
         direction = _direction;
     }
@@ -52,7 +52,7 @@ public class CharacterData
         return position;
     }
 
-    public Vector2Int GetDirection()
+    public Direction GetDirection()
     {
         return direction;
     }

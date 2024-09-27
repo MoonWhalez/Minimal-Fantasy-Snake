@@ -8,7 +8,7 @@ public class HeroesHandler : MonoBehaviour
 
     [SerializeField] private List<Character> _heroesList = new();
     [SerializeField] private List<Vector3> _positions = new();
-    [SerializeField] private List<Vector2Int> _directions = new();
+    [SerializeField] private List<Direction> _directions = new();
 
     private GameObject container;
     // Start is called before the first frame update
@@ -25,18 +25,20 @@ public class HeroesHandler : MonoBehaviour
 
     public void CreateHero(Character _character)
     {
-        Vector2Int lastDirection = PlayerController.instance.GetLastDirection();
+        Direction lastDirection = Direction.None;
         Vector3 spawnPosition = PlayerController.instance.transform.position;
 
         Vector3 spawnOffset = Vector3.zero;
-        Vector2Int spawnDirection = lastDirection;
+        Direction spawnDirection = lastDirection;
 
         if (_heroesList.Count > 0)
         {
             CharacterData latestHero = _heroesList.Last().GetComponent<Character>().GetCharacterData();
-            spawnOffset = new Vector3(latestHero.GetDirection().x, 0, latestHero.GetDirection().y);
+            lastDirection = (Direction)Helper.instance.HandleMinusDegree(_heroesList.Last().transform.eulerAngles.y);
+            Vector2 dir = Helper.instance.AngleToDirection(lastDirection);
+            spawnOffset = new Vector3(dir.x, 0, dir.y);
             spawnPosition = latestHero.GetPosition();
-            spawnDirection = latestHero.GetDirection();
+            spawnDirection = lastDirection;
         }
 
         Character hero = NewHero(_character, spawnPosition - spawnOffset, spawnDirection);
@@ -45,7 +47,7 @@ public class HeroesHandler : MonoBehaviour
         hero.SetStatsUI(statsUI);
     }
 
-    public Character NewHero(Character _character, Vector3 _position, Vector2Int _direction)
+    public Character NewHero(Character _character, Vector3 _position, Direction _direction)
     {
         GameObject heroObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         heroObj.transform.position = _position;
@@ -95,15 +97,22 @@ public class HeroesHandler : MonoBehaviour
 
     public void RemoveCharacter(Character _character)
     {
+        Direction dir = (Direction)Helper.instance.HandleMinusDegree(_character.transform.eulerAngles.y);
+        Debug.Log("Original dir after die: " + dir);
         _heroesList.Remove(_character);
         Destroy(_character.gameObject);
 
-        if(_heroesList.Count <= 0) 
+        if (_heroesList.Count <= 0)
         {
             PlayerController.instance.enabled = false;
             AlertUI.instance.SetAlertText("Game Over!", "no one left in this party! want to restart ?");
             AlertUI.instance.SetAlertButtonsAction(GameController.instance.SetupGame, GameController.instance.StartMenu);
             AlertUI.instance.ShowConfirmAlert(true);
+        }
+        else
+        {
+            PlayerController.instance.UpdateCharacter();
+            _heroesList.First().transform.eulerAngles = new Vector3(0, (int)dir, 0);
         }
     }
 
@@ -162,6 +171,7 @@ public class HeroesHandler : MonoBehaviour
             RotateHeroesPostion(i);
 
         StatsUIHandler.instance.UpdateUIPosition();
+        PlayerController.instance.UpdateCharacter();
     }
 
     Character RotateHeroesPostion(int _index)

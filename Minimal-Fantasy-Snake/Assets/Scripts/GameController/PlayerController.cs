@@ -1,13 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
+
+
+[RequireComponent(typeof(PlayerAudio))]
+[RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerMovement))]
 
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
+    [SerializeField] private PlayerAudio playerAudio;
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private PlayerMovement playerMovement;
 
-    private Vector2Int inputDirection;
-    private Vector2Int lastDirection;
+    private Character CurrentCharacter;
     private Vector3 movePosition;
     bool isMove;
 
@@ -20,165 +28,102 @@ public class PlayerController : MonoBehaviour
         }
 
         instance = this;
+
+        playerAudio = GetComponent<PlayerAudio>();
+        playerInput = GetComponent<PlayerInput>();
+        playerMovement = GetComponent<PlayerMovement>();
     }
 
+    public void UpdateCharacter()
+    {
+        CurrentCharacter = HeroesHandler.instance.GetHeroesList().First();
+    }
+
+    int text = 0;
     void Update()
     {
-        HandleInput();
-    }
+        if (CurrentCharacter == null)
+            return;
 
-    void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-            HeroesHandler.instance.RotateHeroes(_isRotateTop: true);
-        if (Input.GetKeyDown(KeyCode.E))
-            HeroesHandler.instance.RotateHeroes(_isRotateTop: false);
+        Direction dir = playerInput.HandleInput(CurrentCharacter);
 
-        //TODO : Change Arrow to Gamepad direction
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (dir != Direction.None)
         {
-            inputDirection = Vector2Int.up;
-            isMove = true;
-        }
+            bool isPartyMove = false;
 
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            inputDirection = Vector2Int.left;
-            isMove = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            inputDirection = Vector2Int.right;
-            isMove = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            inputDirection = Vector2Int.down;
-            isMove = true;
-        }
+            float y = Helper.instance.HandleMinusDegree(CurrentCharacter.transform.eulerAngles.y);
+            Direction original = (Direction)y;
+            Debug.Log("original: " + original);
+            CurrentCharacter.transform.eulerAngles = new Vector3(0, (int)dir, 0);
 
-        if (isMove && IsValidMove(inputDirection))
-        {
-            Move(inputDirection);
-            isMove = false;
-        }
-    }
+            movePosition = CurrentCharacter.transform.localPosition + CurrentCharacter.transform.forward;
+            
+            BlockData blockData = MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.GetPosition().x.ToString("F2") == movePosition.x.ToString("F2") &&
+            x.GetPosition().z.ToString("F2") == movePosition.z.ToString("F2"));
 
-    bool IsValidMove(Vector2Int direction)
-    {
-        if (lastDirection == Vector2Int.zero)
-            lastDirection = direction;
-
-        if (lastDirection == Vector2Int.up && direction != Vector2Int.down ||
-            lastDirection == Vector2Int.right && direction != Vector2Int.left ||
-            lastDirection == Vector2Int.left && direction != Vector2Int.right ||
-            lastDirection == Vector2Int.down && direction != Vector2Int.up)
-        {
-            lastDirection = direction;
-            return true;
-        }
-
-        AlertUI.instance.SetAlertText("watchout!", "can not move backward!");
-        AlertUI.instance.ShowAlert();
-        Debug.Log("can not move backward!");
-        isMove = false;
-
-        return false;
-    }
-
-    void Move(Vector2Int direction)
-    {
-        bool isPartyMove = false;
-        movePosition = transform.position + new Vector3(direction.x, 0, direction.y);
-
-        if (MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.GetPosition().x == movePosition.x && x.GetPosition().z == movePosition.z) == null)
-        {
-            AlertUI.instance.SetAlertText("watchout!", "it's a cliff, your leader flying to nowhere.. . .");
-            AlertUI.instance.ShowAlert();
-            Debug.Log("watchout! it's a cliff, your leader flying to nowhere.. . .");
-
-            if (HeroesHandler.instance.GetHeroesList().Count > 0)
+            if (blockData == null)
             {
-                HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0]);
-                direction = Vector2Int.zero;
-                lastDirection = direction;
+                CurrentCharacter.transform.eulerAngles = new Vector3(0, (int)original, 0);
+                FallFromMap();
+                isPartyMove = true;
             }
-
-            if (HeroesHandler.instance.GetHeroesList().Count > 1)
+            else
             {
-                direction = -HeroesHandler.instance.GetHeroesList()[1].GetCharacterData().GetDirection();
-                lastDirection = direction;
-            }
-
-            isPartyMove = true;
-
-        }
-        else
-        {
-            BlockData blockData = MapSystemHandler.instance.GetBlockDataList().FirstOrDefault(x => x.GetPosition().x == movePosition.x && x.GetPosition().z == movePosition.z);
-
-            if (blockData.GetCharacter() != null)
-            {
-                if (blockData.GetCharacter())
+                Character character = blockData.GetCharacter();
+                if (character != null)
                 {
-
-                    if (HeroesHandler.instance.GetHeroesList().Contains(blockData.GetCharacter()))
+                    if (HeroesHandler.instance.GetHeroesList().Contains(character))
                     {
-                        AlertUI.instance.SetAlertText("Game Over!", "you attack your party! want to restart ?");
-                        AlertUI.instance.SetAlertButtonsAction(GameController.instance.SetupGame, GameController.instance.StartMenu);
-                        AlertUI.instance.ShowConfirmAlert(true);
-                        Debug.Log("you attack your party! party is disband!");
-                        enabled = false;
+                        AttackParty();
                         return;
                     }
                     else
                     {
-                        bool canMove = Fight(blockData.GetCharacter());
+                        bool canMove = Fight(character);
                         isPartyMove = canMove;
                     }
 
                 }
-
-            }
-            else
-            {
-                if (blockData.GetItem() != null)
+                else
                 {
-                    PickItem(blockData.GetItem());
-                }
+                    Item item = blockData.GetItem();
 
-                transform.position = movePosition;
-                isPartyMove = true;
+                    if (item != null)
+                    {
+                        PickItem(item);
+                    }
+
+                    playerMovement.Move(movePosition);
+                    isPartyMove = true;
+                }
+            }
+
+            if (isPartyMove)
+            {
+                playerMovement.PartyMove(dir);
             }
         }
+    }
 
-        if (isPartyMove)
+    void FallFromMap()
+    {
+        AlertUI.instance.SetAlertText("watchout!", "it's a cliff, your leader flying to nowhere.. . .");
+        AlertUI.instance.ShowAlert();
+        Debug.Log("watchout! it's a cliff, your leader flying to nowhere.. . .");
+
+        if (HeroesHandler.instance.GetHeroesList().Count > 0)
         {
-            List<Character> heroes = HeroesHandler.instance.GetHeroesList();
-
-            if (heroes.Count > 0)
-            {
-                for (int i = heroes.Count - 1; i >= 0; i--)
-                {
-                    if (i > 0)
-                    {
-                        heroes[i].GetCharacterData().SetPosition(heroes[i - 1].GetCharacterData().GetPosition());
-                        heroes[i].SetPosition();
-
-                        heroes[i].GetCharacterData().SetDirection(heroes[i - 1].GetCharacterData().GetDirection());
-                    }
-                    else
-                    {
-                        heroes[i].GetCharacterData().SetPosition(transform.position);
-                        heroes[i].SetPosition();
-                        heroes[i].GetCharacterData().SetDirection(direction);
-                    }
-                }
-            }
-
-            MapSystemHandler.instance.UpdateBlockDataCharacter();
-            StatsUIHandler.instance.UpdateUIPosition();
+            HeroesHandler.instance.RemoveCharacter(HeroesHandler.instance.GetHeroesList()[0]);
         }
+    }
+
+    void AttackParty() 
+    {
+        AlertUI.instance.SetAlertText("Game Over!", "you attack your party! want to restart ?");
+        AlertUI.instance.SetAlertButtonsAction(GameController.instance.SetupGame, GameController.instance.StartMenu);
+        AlertUI.instance.ShowConfirmAlert(true);
+        Debug.Log("you attack your party! party is disband!");
+        enabled = false;
     }
 
     bool Fight(Character _target)
@@ -288,18 +233,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public Vector2Int GetLastDirection()
-    {
-        if (lastDirection == Vector2Int.zero)
-            lastDirection = inputDirection;
-
-        return lastDirection;
-    }
-
     public void Clear()
     {
         enabled = true;
-        inputDirection = Vector2Int.zero;
-        lastDirection = Vector2Int.zero;
     }
+
+    public PlayerInput PlayerInput => playerInput;
 }

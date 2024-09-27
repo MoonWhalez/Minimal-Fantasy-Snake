@@ -147,7 +147,7 @@ public class GameController : MonoBehaviour
 
         Character character = RandomCharacter();
         HeroesHandler.CreateHero(character);
-
+        PlayerController.instance.UpdateCharacter();
         //create monster
         int monsterCount = SpawnConfig.StartMonsters;
         for (int i = 0; i < monsterCount; i++)
